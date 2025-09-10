@@ -16,6 +16,8 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 
 from utils import *
+from shared import *
+import shared
 
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 import torch
@@ -27,7 +29,6 @@ import torch.distributed as dist
 from torch.nn.attention.flex_attention import BlockMask, flex_attention
 #torch._inductor.config.coordinate_descent_tuning = True # we have banned this flag for new records because it causes compilation to take 30min
 
-from shared import *
 import wandb
 
 # -----------------------------------------------------------------------------
@@ -580,6 +581,7 @@ class Hyperparameters:
     update_interval = 50 # how often to update and evaluate the averaged model
     model_update_interval = 1000 # how often to update the model with the averaged model
 shared.args = Hyperparameters()
+args = shared.args
 
 # torchrun sets these env variables
 rank = int(os.environ["RANK"])
@@ -599,6 +601,28 @@ if master_process:
     os.makedirs("logs", exist_ok=True)
     logfile = f"logs/{run_id}.txt"
     print(logfile)
+    
+    # Initialize wandb
+    wandb.init(
+        project="nanogpt-trajectory",
+        name=f"run_{run_id}",
+        config={
+            "train_files": args.train_files,
+            "val_files": args.val_files,
+            "val_tokens": args.val_tokens,
+            "train_seq_len": args.train_seq_len,
+            "val_seq_len": args.val_seq_len,
+            "num_iterations": args.num_iterations,
+            "cooldown_frac": args.cooldown_frac,
+            "val_loss_every": args.val_loss_every,
+            "checkpoint_averaging": args.checkpoint_averaging,
+            "num_checkpoints": args.num_checkpoints,
+            "interval_between_checkpoints": args.interval_between_checkpoints,
+            "update_interval": args.update_interval,
+            "model_update_interval": args.model_update_interval,
+            "world_size": world_size,
+        }
+    )
 def print0(s, console=False):
     if master_process:
         with open(logfile, "a") as f:
@@ -751,12 +775,14 @@ for step in range(train_steps + 1):
                 batch.append([inputs, targets])
 
             val_loss = estimate_loss(model, batch, step, val_steps)
-
-            trajectory_model = average_models(checkpoint_list[-3:])
-            trajectory_loss = estimate_loss(trajectory_model, batch, step, val_steps)
-            print0(f'{trajectory_loss=}')
-
-        del trajectory_model
+            
+            # Compute trajectory loss if we have enough checkpoints
+            trajectory_loss = None
+            if checkpoint_averaging and len(checkpoint_list) >= 3:
+                trajectory_model = average_models(checkpoint_list[-3:])
+                trajectory_loss = estimate_loss(trajectory_model, batch, step, val_steps)
+                print0(f'{trajectory_loss=}')
+                del trajectory_model
         model.load_state_dict(original_model)      
 
         del val_loader
@@ -770,6 +796,23 @@ for step in range(train_steps + 1):
 
         print0(f"step:{step}/{train_steps} val_loss:{val_loss:.4f} train_time:{training_time_ms:.0f}ms step_avg:{training_time_ms/max(step, 1):.2f}ms", console=True)
         print0(trajectory_model_loss_dict)
+        
+        # Log to wandb
+        if master_process:
+            log_dict = {
+                "step": step,
+                "val_loss": val_loss.item(),
+                "train_time_ms": training_time_ms,
+                "step_avg_ms": training_time_ms/max(step, 1),
+                "trajectory_loss": trajectory_loss.item() if 'trajectory_loss' in locals() else None,
+            }
+            
+            # Add trajectory model losses if available
+            if trajectory_model_loss_dict is not None:
+                for key, loss_tensor in trajectory_model_loss_dict.items():
+                    log_dict[f"trajectory_model_{key}"] = loss_tensor.item() if torch.is_tensor(loss_tensor) else loss_tensor
+            
+            wandb.log(log_dict, step=step)
         
         if step % landscape_drawing_step ==0:
             with torch.no_grad():
@@ -811,7 +854,23 @@ for step in range(train_steps + 1):
     # logging
     approx_training_time_ms = training_time_ms + 1000 * (time.perf_counter() - t0)
     print0(f"step:{step+1}/{train_steps} train_time:{approx_training_time_ms:.0f}ms step_avg:{approx_training_time_ms/(step + 1):.2f}ms", console=True)
+    
+    # Log training step to wandb
+    if master_process:
+        wandb.log({
+            "train_step": step + 1,
+            "approx_train_time_ms": approx_training_time_ms,
+            "approx_step_avg_ms": approx_training_time_ms/(step + 1),
+            "learning_rate_opt1": optimizer1.param_groups[0]["lr"],
+            "learning_rate_opt2": optimizer2.param_groups[0]["lr"],
+            "momentum_opt2": optimizer2.param_groups[0]["momentum"],
+        }, step=step+1)
 
 print0(f"peak memory allocated: {torch.cuda.max_memory_allocated() // 1024 // 1024} MiB "
        f"reserved: {torch.cuda.max_memory_reserved() // 1024 // 1024} MiB", console=True)
+
+# Finish wandb run
+if master_process:
+    wandb.finish()
+
 dist.destroy_process_group()
