@@ -715,7 +715,7 @@ num_checkpoints = args.num_checkpoints
 interval_between_checkpoints = args.interval_between_checkpoints
 update_interval = args.update_interval
 model_update_interval = args.model_update_interval
-landscape_drawing_step = interval_between_checkpoints
+landscape_drawing_step = 100000 # never draw a landscape.
 checkpoint_list = []
 trajectory_model_dict = None
 # wont be able to evaluate it at every step...
