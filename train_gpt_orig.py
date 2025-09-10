@@ -9,13 +9,6 @@ import glob
 from dataclasses import dataclass
 from functools import lru_cache, partial # Added partial for hook registration
 from pathlib import Path
-from itertools import combinations
-
-import numpy as np
-import matplotlib.pyplot as plt
-from copy import deepcopy
-
-from utils import *
 
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 import torch
@@ -571,14 +564,8 @@ class Hyperparameters:
     num_iterations = 1750 # number of iterations to run
     cooldown_frac = 0.45 # fraction of training spent cooling down the learning rate
     # evaluation and logging
-    val_loss_every = 50 # every how many steps to evaluate val loss? 0 for only at the end
+    val_loss_every = 125 # every how many steps to evaluate val loss? 0 for only at the end
     save_checkpoint = False
-    # checkpoint averaging
-    checkpoint_averaging = True # whether to enable checkpoint averaging
-    num_checkpoints = 6 # number of recent checkpoints to average
-    interval_between_checkpoints = 50 # how often to save checkpoints for averaging
-    update_interval = 50 # how often to update and evaluate the averaged model
-    model_update_interval = 1000 # how often to update the model with the averaged model
 args = Hyperparameters()
 
 # torchrun sets these env variables
@@ -696,52 +683,10 @@ torch.cuda.synchronize()
 t0 = time.perf_counter()
 # begin training
 train_steps = args.num_iterations
-checkpoint_averaging = args.checkpoint_averaging
-num_checkpoints = args.num_checkpoints
-interval_between_checkpoints = args.interval_between_checkpoints
-update_interval = args.update_interval
-model_update_interval = args.model_update_interval
-landscape_drawing_step = interval_between_checkpoints
-checkpoint_list = []
-trajectory_model_dict = None
-# wont be able to evaluate it at every step...
 for step in range(train_steps + 1):
     last_step = (step == train_steps)
 
-    # --------------- CHECKPOINT AVERAGING SECTION -----------------
-    if checkpoint_averaging:
-        if step % interval_between_checkpoints == 0:
-            checkpoint_list.append({'step': step, 'model_state_dict': copy.deepcopy(model.state_dict())})
-            # Keep only the most recent num_checkpoints
-            if len(checkpoint_list) > num_checkpoints:
-                checkpoint_list = checkpoint_list[-num_checkpoints:]
-        
-        # # Only update averaged model when we have enough checkpoints and it's an update step
-        # if len(checkpoint_list) >= num_checkpoints and step % update_interval == 0:
-        #     trajectory_model_dict = {}
-        #     for fourtuple in combinations(sorted(checkpoint_list[:-1], key=lambda c: c['step']), 4):
-                
-        #         # define string of fourtuple
-        #         string_fourtuple = ','.join(str(checkpoint['step']) for checkpoint in fourtuple) + ',' + str(step)
-        #         trajectory_model_dict[string_fourtuple] = copy.deepcopy(model.state_dict())
-
-        #         # define the different trajectory models
-        #         for name, param in trajectory_model_dict[string_fourtuple].items():
-        #             # Initialize with zeros
-        #             param.data.zero_()
-                
-        #             # Sum all checkpoint parameters
-        #             for checkpoint in fourtuple:
-        #                 param.data += checkpoint['model_state_dict'][name].data
-                    
-        #             recent_checkpoint = checkpoint_list[-1]
-        #             param.data += recent_checkpoint['model_state_dict'][name].data
-
-        #             # Normalize the loss
-        #             param.data /= (len(fourtuple) + 1)
-
-        # we now have a dictionary of trajectory models to evaluate
-    # --------------- VALIDATION SECTION  -----------------
+    # --------------- VALIDATION SECTION -----------------
     if last_step or (args.val_loss_every > 0 and step % args.val_loss_every == 0):
         # stop the clock
         torch.cuda.synchronize()
@@ -752,46 +697,16 @@ for step in range(train_steps + 1):
         val_steps = args.val_tokens // val_batch_size
         val_loader = distributed_data_generator(args.val_files, val_batch_size, align_to_bos=False)
         val_loss = 0
-        trajectory_model_loss_dict = {}
-
-        original_model = copy.deepcopy(model.state_dict())
         with torch.no_grad():
-            batch = []
             for _ in range(val_steps):
                 inputs, targets = next(val_loader)
-                batch.append([inputs, targets])
-
-            val_loss = estimate_loss(model, batch, step, val_steps)
-
-            if trajectory_model_dict is not None and checkpoint_averaging and step % update_interval == 0:
-                for string_fourtuple in trajectory_model_dict.keys():
-                    model.load_state_dict(trajectory_model_dict[string_fourtuple])
-                    trajectory_model_loss_dict[string_fourtuple] = estimate_loss(model, batch, step, val_steps)
-
-        model.load_state_dict(original_model)      
-
+                val_loss += model(inputs, targets, get_window_size_blocks(step))
+        val_loss /= val_steps
         del val_loader
         dist.all_reduce(val_loss, op=dist.ReduceOp.AVG)
-        if trajectory_model_dict is not None and checkpoint_averaging and step % update_interval == 0:
-            for key, loss in trajectory_model_loss_dict.items():
-                dist.all_reduce(loss, op=dist.ReduceOp.AVG)
-            # dist.all_reduce(trajectory_model_loss_dict, op=dist.ReduceOp.AVG) 
-            # dist.all_reduce(trajectory_model_dict, op=dist.ReduceOp.AVG)
-            # will this distribute the loss?
-
         print0(f"step:{step}/{train_steps} val_loss:{val_loss:.4f} train_time:{training_time_ms:.0f}ms step_avg:{training_time_ms/max(step, 1):.2f}ms", console=True)
-        print0(trajectory_model_loss_dict)
-        
-        if step % landscape_drawing_step ==0:
-            with torch.no_grad():
-                for pair in combinations(sorted(checkpoint_list[:-1], key=lambda c: c['step']), 2):
-                    triple = pair + (checkpoint_list[-1],)
-                    # checkpointlist = [checkpoint['model_state_dict'] for checkpoint in triple]
-                    draw_checkpoint_landscape(triple, step, val_steps, device, batch, model, grid_size=7)
-        
-        model.load_state_dict(original_model)
-
         model.train()
+        # start the clock again
         torch.cuda.synchronize()
         t0 = time.perf_counter()
 
@@ -813,10 +728,9 @@ for step in range(train_steps + 1):
     for group in optimizer2.param_groups:
         frac = min(step / 300, 1) # momentum warmup for muon
         group["momentum"] = (1 - frac) * 0.85 + frac * 0.95
-    # step the optimizers - training step no??
+    # step the optimizers
     for opt in optimizers:
         opt.step()
-    # is there no all-reduce of gradients????
     # null the gradients
     model.zero_grad(set_to_none=True)
     # logging
