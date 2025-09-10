@@ -580,6 +580,7 @@ class Hyperparameters:
     interval_between_checkpoints = 50 # how often to save checkpoints for averaging
     update_interval = 50 # how often to update and evaluate the averaged model
     model_update_interval = 1000 # how often to update the model with the averaged model
+    model_average_timestep = 700
 shared.args = Hyperparameters()
 args = shared.args
 
@@ -779,11 +780,12 @@ for step in range(train_steps + 1):
             # Compute trajectory loss if we have enough checkpoints
             trajectory_loss = None
             if checkpoint_averaging and len(checkpoint_list) >= 3:
-                trajectory_model = average_models(checkpoint_list[-3:])
+                trajectory_model = average_models(model, checkpoint_list[-3:])
                 trajectory_loss = estimate_loss(trajectory_model, batch, step, val_steps)
                 print0(f'{trajectory_loss=}')
                 del trajectory_model
-        model.load_state_dict(original_model)      
+        model.load_state_dict(original_model)
+
 
         del val_loader
         dist.all_reduce(val_loss, op=dist.ReduceOp.AVG)
@@ -826,6 +828,9 @@ for step in range(train_steps + 1):
         model.train()
         torch.cuda.synchronize()
         t0 = time.perf_counter()
+
+    if step == args.model_average_timestep:
+        model = average_models(model) # memory unsafe atm it seems
 
     if last_step:
         if master_process and args.save_checkpoint:
