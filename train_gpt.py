@@ -239,6 +239,8 @@ class DistAdam(torch.optim.Optimizer):
             grad = torch.empty_like(params[-1])
             for base_i in range(len(params)):
                 grad = params[base_i].grad
+                if grad is None:
+                    continue
                 rank_size = grad.shape[0] // world_size
                 grad_slice = torch.empty_like(grad[:rank_size])
                 reduce_scatter_futures.append(dist.reduce_scatter_tensor(grad_slice, grad, op=dist.ReduceOp.AVG, async_op=True).get_future())
@@ -725,7 +727,12 @@ for step in range(train_steps + 1):
     # --------------- CHECKPOINT AVERAGING SECTION -----------------
     if checkpoint_averaging:
         if step % interval_between_checkpoints == 0:
-            checkpoint_list.append({'step': step, 'model_state_dict': copy.deepcopy(model.state_dict())})
+            checkpoint_dict = {
+                'step': step, 
+                'model_state_dict': copy.deepcopy(model.state_dict()), 
+                'optimizer_state': (copy.deepcopy(x.state_dict()) for x in optimizers),
+            }
+            checkpoint_list.append(checkpoint_dict)
             # Keep only the most recent num_checkpoints
             if len(checkpoint_list) > num_checkpoints:
                 checkpoint_list = checkpoint_list[-num_checkpoints:]
@@ -830,7 +837,8 @@ for step in range(train_steps + 1):
         t0 = time.perf_counter()
 
     if step == args.model_average_timestep:
-        model = average_models(model) # memory unsafe atm it seems
+        model = average_models(model, checkpoint_list[-3:]) # memory unsafe atm it seems
+        # optimizers = average_optimizer_states(optimizers, checkpoint_list[-3:])
 
     if last_step:
         if master_process and args.save_checkpoint:
