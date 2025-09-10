@@ -27,6 +27,9 @@ import torch.distributed as dist
 from torch.nn.attention.flex_attention import BlockMask, flex_attention
 #torch._inductor.config.coordinate_descent_tuning = True # we have banned this flag for new records because it causes compilation to take 30min
 
+from shared import *
+import wandb
+
 # -----------------------------------------------------------------------------
 # Custom operators: FP8 matmul by @YouJiacheng
 
@@ -393,9 +396,6 @@ class Block(nn.Module):
 # -----------------------------------------------------------------------------
 # The main model
 
-def next_multiple_of_n(v: float | int, *, n: int):
-    return next(x for x in range(n, int(v) + 1 + n, n) if x >= v)
-
 class GPT(nn.Module):
     def __init__(self, vocab_size: int, num_layers: int, num_heads: int, model_dim: int, max_seq_len: int):
         super().__init__()
@@ -651,17 +651,6 @@ def get_lr(step: int):
         w = (1 - x) / args.cooldown_frac
         return w * 1.0 + (1 - w) * 0.1
 
-# attention window size schedule: linearly increase
-@lru_cache(1)
-def get_window_size_blocks_helper(window_size: int):
-    return torch.tensor(window_size // 128, dtype=torch.int32, pin_memory=True).cuda(non_blocking=True)
-def get_window_size_blocks(step: int):
-    x = step / args.num_iterations # progress in training
-    assert 0 <= x <= 1
-    # Linearly increase the block-wise sliding window size over training 128 -> 1792
-    # increase by @fernbear.bsky.social; block-wise by @YouJiacheng
-    window_size = next_multiple_of_n(1728 * x, n=128)
-    return get_window_size_blocks_helper(window_size)
 
 model: nn.Module = torch.compile(model, dynamic=False)
 
@@ -763,11 +752,11 @@ for step in range(train_steps + 1):
 
             val_loss = estimate_loss(model, batch, step, val_steps)
 
-            if trajectory_model_dict is not None and checkpoint_averaging and step % update_interval == 0:
-                for string_fourtuple in trajectory_model_dict.keys():
-                    model.load_state_dict(trajectory_model_dict[string_fourtuple])
-                    trajectory_model_loss_dict[string_fourtuple] = estimate_loss(model, batch, step, val_steps)
+            trajectory_model = average_models(checkpoint_list[-3:])
+            trajectory_loss = estimate_loss(trajectory_model, batch, step, val_steps)
+            print0(f'{trajectory_loss=}')
 
+        del trajectory_model
         model.load_state_dict(original_model)      
 
         del val_loader

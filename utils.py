@@ -12,6 +12,23 @@ def estimate_loss(model, batch, step, val_steps):
     assert len(batch) == val_steps
     return loss / len(batch)
 
+def average_models(model, checkpoints: list):
+    average_model = copy.deepcopy(model)
+    state_dict = average_model.state_dict()
+
+    # define the different trajectory models
+    for name, param in state_dict.items():
+        # Initialize with zeros
+        param.data.zero_()
+    
+        # Sum all checkpoint parameters
+        for checkpoint in checkpoints:
+            param.data += checkpoint['model_state_dict'][name].data
+        
+        param.data /= len(checkpoints)
+
+    return average_model
+
 def draw_checkpoint_landscape(last_3_checkpoints, step, val_steps, device, batch, model, grid_size=7):
     # need this last_3_checkpoints to be a list of one sized dictionaries
     
