@@ -579,7 +579,7 @@ class Hyperparameters:
     interval_between_checkpoints = 50 # how often to save checkpoints for averaging
     update_interval = 50 # how often to update and evaluate the averaged model
     model_update_interval = 1000 # how often to update the model with the averaged model
-args = Hyperparameters()
+shared.args = Hyperparameters()
 
 # torchrun sets these env variables
 rank = int(os.environ["RANK"])

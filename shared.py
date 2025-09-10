@@ -1,6 +1,8 @@
 import torch
 from functools import lru_cache
 
+args = None
+
 def next_multiple_of_n(v: float | int, *, n: int):
     return next(x for x in range(n, int(v) + 1 + n, n) if x >= v)
 
