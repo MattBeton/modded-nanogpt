@@ -7,6 +7,7 @@ from copy import deepcopy
 import copy
 import wandb
 from shared import get_window_size_blocks
+import math
 
 def estimate_loss(model, batch, step, val_steps):
     loss = 0
@@ -165,6 +166,64 @@ def average_optimizer_states(
         optimizer.load_state_dict(base_sd)
 
     return optimizers
+
+@torch.no_grad()
+def set_muon_velocity_from_diff(
+    muon_optimizer: torch.optim.Optimizer,
+    model: torch.nn.Module,
+    diff_state_cpu: Dict[str, torch.Tensor],
+    *,
+    scale: float,
+    world_size: int,
+    rank: int,
+    param_to_name: Dict[int, str],
+) -> float:
+    """
+    For each Muon-optimized parameter owned by this RANK, set the momentum_buffer
+    (Muon’s velocity term) to `scale * (avg_param - current_param)`.
+
+    Args:
+      muon_optimizer: the Muon optimizer (optimizer2 in your script)
+      model: the compiled model (only used to pick a device for the reduction)
+      diff_state_cpu: dict[name -> Tensor(cpu, fp32)] with (avg - current) per parameter
+      scale: alpha, e.g. 0.1
+      world_size, rank: distributed ownership info (param idx % world_size == rank)
+      param_to_name: mapping id(param) -> "module.parameter" string name
+
+    Returns:
+      Global L2 norm of the pseudo-velocity (for logging).
+    """
+    device = next(model.parameters()).device
+    total_norm_sq = torch.tensor(0.0, device=device)
+
+    for group in muon_optimizer.param_groups:
+        params = group["params"]
+        for pi, p in enumerate(params):
+            # Update only on the owner rank for this parameter index
+            if (pi % world_size) != rank:
+                continue
+
+            name = param_to_name.get(id(p), None)
+            if name is None:
+                continue
+            diff_cpu = diff_state_cpu.get(name, None)
+            if diff_cpu is None:
+                continue
+
+            # Ensure state entry exists and is on the right device/dtype
+            st = muon_optimizer.state[p]
+            mb = st.get("momentum_buffer", None)
+            if mb is None or mb.shape != p.shape or mb.dtype != p.dtype or mb.device != p.device:
+                st["momentum_buffer"] = torch.zeros_like(p)
+                mb = st["momentum_buffer"]
+
+            pseudo = diff_cpu.to(device=p.device, dtype=p.dtype, non_blocking=True).mul_(scale)
+            mb.copy_(pseudo)
+            total_norm_sq += pseudo.float().pow(2).sum()
+
+    # Aggregate across ranks for logging
+    dist.all_reduce(total_norm_sq, op=dist.ReduceOp.SUM)
+    return float(total_norm_sq.sqrt().item())
 
 @torch.no_grad()
 def average_models(

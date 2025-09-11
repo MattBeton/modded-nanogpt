@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from functools import lru_cache, partial # Added partial for hook registration
 from pathlib import Path
 from itertools import combinations
+import math
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -578,13 +579,13 @@ class Hyperparameters:
     save_checkpoint = False
     # checkpoint averaging
     checkpoint_averaging = True # whether to enable checkpoint averaging
-    num_checkpoints = 6 # number of recent checkpoints to average
+    num_checkpoints = 3 # number of recent checkpoints to average
     interval_between_checkpoints = 50 # how often to save checkpoints for averaging
     update_interval = 50 # how often to update and evaluate the averaged model
     model_update_interval = 1000 # how often to update the model with the averaged model
-
     # model_average_timestep = 750
-    model_average_timestep = 1400
+    model_average_timestep = 10000
+    pseudo_grad_scale = 0.1
 
 shared.args = Hyperparameters()
 args = shared.args
@@ -699,13 +700,40 @@ for opt in optimizers:
         group["initial_lr"] = group["lr"]
 
 name_to_opt, _ = build_param_owner_maps(model, optimizers)
+param_to_name = {id(p): n for n, p in model.named_parameters()}  # <-- add this
 
 # learning rate schedule: stable then decay
 def get_lr(step: int):
     x = step / args.num_iterations # progress in training
     assert 0 <= x < 1
-    # if x < args.model_average_timestep/args.num_iterations:
+    # # Cosine annealing schedule, no warmup
+    # min_lr = 0.2  # minimum learning rate as a fraction of initial lr
+    # cosine_decay = 0.5 * (1 + math.cos(math.pi * x))
+    # return min_lr + (1 - min_lr) * cosine_decay
+    return 2.0
+    # # cosine annealing without warmup, from start to end between 1 and 0.1
+    # if x < 1 - args.cooldown_frac:
+    #     return 0.3
+    # else:
+    #     w = (1 - x) / args.cooldown_frac
+    #     return w * 0.3 + (1 - w) * 0.03
+    # cosine annealing without warmup, from start to end between 1 and 0
+    # if x < 1 - args.cooldown_frac:
     #     return 1.0
+    # else:
+    #     w = (1 - x) / args.cooldown_frac
+    #     return w * 1.0 + (1 - w) * 0.1
+    # if x < args.model_average_timestep/args.num_iterations:
+    #      return 1.0
+    # elif x < (args.model_average_timestep + 300)/args.num_iterations:
+    #     # want a linear transition from 0.1 to 1.0 over 300 steps
+    #     w = (x - args.model_average_timestep/args.num_iterations) * (args.num_iterations / 300)
+    #     return (1 - w) * 0.1 + w * 0.3
+    # elif x < 1 - args.cooldown_frac:
+    #     return 0.2
+    # else:
+    #     w = (1 - x) / args.cooldown_frac
+    #     return w * 0.2 + (1 - w) * 0.02
     # if x < 1000/args.num_iterations:
     #     return 1.0
     # elif x < (args.model_average_timestep + 300)/args.num_iterations:
@@ -716,14 +744,21 @@ def get_lr(step: int):
     #     # want a linear transition from 0.1 to 1.0 over 300 steps
     #     w = (x - args.model_average_timestep/args.num_iterations) * (args.num_iterations / 300)
     #     return (1 - w) * 0.1 + w * 0.5
-    if x < 1 - args.cooldown_frac:
-        return 1.0
-    # elif x >= 1 - args.cooldown_frac and x < 1400/args.num_iterations:
-
-    #     :
-    else:
-        w = (1 - x) / args.cooldown_frac
-        return w * 1.0 + (1 - w) * 0.1
+    # if x < args.model_average_timestep/args.num_iterations:
+    #     return 1.0
+    # elif x < (args.model_average_timestep + 300)/args.num_iterations:
+    #     # want a linear transition from 0.1 to 1.0 over 300 steps
+    #     w = (x - args.model_average_timestep/args.num_iterations) * (args.num_iterations / 300)
+    #     return (1 - w) * 0.1 + w * 1.0
+    # elif x < 1 - args.cooldown_frac:
+    #     return 1.0
+    # else:
+    #     w = (1 - x) / args.cooldown_frac
+    #     return w * 1.0 + (1 - w) * 0.1
+    # else:
+    #     w = (1 - x) / args.cooldown_frac
+    #     return w * 0.3 + (1 - w) * 0.06
+    
 
 
 model: nn.Module = torch.compile(model, dynamic=False)
@@ -893,13 +928,57 @@ for step in range(train_steps + 1):
         torch.cuda.synchronize()
         t0 = time.perf_counter()
 
-    if step == args.model_average_timestep:
-        from utils import averaged_state_dict, load_state_dict_inplace, average_optimizer_states
-        print0('averaging model and loading in!', console=True)
-        avg_state = averaged_state_dict(checkpoint_list[-3:])
-        load_state_dict_inplace(model, avg_state)
+    # if step == args.model_average_timestep:
+    #     from utils import averaged_state_dict, load_state_dict_inplace, average_optimizer_states
+    #     print0('averaging model and loading in!', console=True)
+    #     avg_state = averaged_state_dict(checkpoint_list[-3:])
+    #     load_state_dict_inplace(model, avg_state)
 
-        # optimizers = average_optimizer_states(optimizers, checkpoint_list[-3:])
+    #     # optimizers = average_optimizer_states(optimizers, checkpoint_list[-3:])
+
+    if step == args.model_average_timestep:
+        from utils import averaged_state_dict, load_state_dict_inplace, set_muon_velocity_from_diff
+        print0('averaging model and loading in (and seeding Muon velocity)...', console=True)
+
+        # 1) Snapshot the current model (CPU) so we can compute (avg - current)
+        current_cpu = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+
+        # 2) Build the averaged "trajectory" state (CPU, fp32)
+        assert len(checkpoint_list) >= 3, "Need at least 3 checkpoints for trajectory averaging"
+        avg_state_cpu = averaged_state_dict(checkpoint_list[-3:])  # average of last 3
+
+        # 3) Prepare diffs ONLY for Muon-owned parameters: diff = avg - current
+        muon_opt_idx = optimizers.index(optimizer2)  # should be 1
+        diff_muon_cpu = {
+            k: (current_cpu[k] - avg_state_cpu[k])
+            for k in avg_state_cpu.keys()
+            if name_to_opt.get(k, None) == muon_opt_idx
+        }
+
+        # 4) Seed Muon velocity with pseudo-gradient on the OWNER rank only
+        pseudo_norm = set_muon_velocity_from_diff(
+            optimizer2,
+            model,
+            diff_muon_cpu,
+            scale=args.pseudo_grad_scale,
+            world_size=world_size,
+            rank=rank,
+            param_to_name=param_to_name,
+        )
+
+        # 5) Switch the live model to the averaged trajectory weights (all params)
+        load_state_dict_inplace(model, avg_state_cpu)
+
+        # 6) (Optional) Log magnitude for monitoring
+        if master_process:
+            wandb.log({
+                "pseudo_grad_scale": args.pseudo_grad_scale,
+                "pseudo_velocity_l2_muon": pseudo_norm,
+            }, step=step)
+
+        # Ensure ranks are in sync before the next training step
+        dist.barrier()
+
 
     if last_step:
         if master_process and args.save_checkpoint:
