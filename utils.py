@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from typing import Dict, Optional, Set, Tuple
 import torch
 import torch.distributed as dist
 from copy import deepcopy
@@ -15,14 +16,41 @@ def estimate_loss(model, batch, step, val_steps):
     dist.all_reduce(loss, op=dist.ReduceOp.AVG)
     return loss / len(batch)
 
+def build_param_owner_maps(model: torch.nn.Module, optimizers) -> Tuple[Dict[str, Optional[int]], Dict[int, Optional[int]]]:
+    """
+    Returns:
+      name_to_opt: mapping of model.state_dict() *parameter names* -> optimizer index (or None if not found)
+      id_to_opt:   mapping of id(parameter tensor object)         -> optimizer index (or None if not found)
+    Buffers (e.g., RoPE cos/sin) are not owned by any optimizer and will map to None.
+    """
+    id_to_opt: Dict[int, Optional[int]] = {}
+    for opt_idx, opt in enumerate(optimizers):
+        for group in opt.param_groups:
+            for p in group["params"]:
+                id_to_opt[id(p)] = opt_idx
+    name_to_opt: Dict[str, Optional[int]] = {}
+    for name, p in model.named_parameters():
+        name_to_opt[name] = id_to_opt.get(id(p), None)
+    return name_to_opt, id_to_opt
+
 @torch.no_grad()
-def averaged_state_dict(checkpoints: list) -> dict[str, torch.Tensor]:
+def averaged_state_dict(
+    checkpoints: list,
+    include_optimizers: Optional[Set[int]] = None,
+    name_to_opt: Optional[Dict[str, Optional[int]]] = None,
+) -> dict[str, torch.Tensor]:
     assert len(checkpoints) > 0
 
     keys = list(checkpoints[0]['model_state_dict'].keys())
     avg: dict[str, torch.Tensor] = {}
 
     for k in keys:
+        # If filtering by optimizer ownership, skip keys not owned by requested optimizers.
+        if include_optimizers is not None and name_to_opt is not None:
+            owner = name_to_opt.get(k, None)
+            if owner not in include_optimizers:
+                # skip averaging for this key
+                continue
         acc = None
         for ckpt in checkpoints:
             t = ckpt["model_state_dict"][k]
@@ -41,52 +69,115 @@ def load_state_dict_inplace(model: torch.nn.Module, avg_state_cpu: dict[str, tor
     """
     msd = model.state_dict()
     for k, dest in msd.items():
-        src = avg_state_cpu[k].to(device=dest.device, dtype=dest.dtype, non_blocking=True)
+        src = avg_state_cpu.get(k, None)
+        if src is None:
+            continue  # allow partial updates
+        src = src.to(device=dest.device, dtype=dest.dtype, non_blocking=True)
         dest.copy_(src, non_blocking=True)
 
-def average_optimizer_states(optimizers, checkpoints: list, only_optimizers: list[int] = []):
-    averaged_optimizers = copy.deepcopy(optimizers)
-    
-    for opt_idx, optimizer in enumerate(averaged_optimizers):
-        if only_optimizers and opt_idx not in only_optimizers:
-            break
+def average_optimizer_states(
+    optimizers,
+    checkpoints: list,
+    only_optimizers: Optional[Set[int]] = None,
+):
+    """
+    In-place average of optimizer states across `checkpoints` for the selected optimizers.
+    Robustly aligns per-parameter state by (group_idx, param_idx) position rather than integer keys.
+    This avoids mismatches across independent state_dict enumerations.
+    """
+    num_ckpts = len(checkpoints)
+    if num_ckpts == 0:
+        return optimizers
 
-        state_dict = optimizer.state_dict()
-        
-        # Zero out the state
-        for key in state_dict['state']:
-            for state_key, state_value in state_dict['state'][key].items():
-                if torch.is_tensor(state_value) and torch.is_floating_point(state_value):
-                    state_value.zero_()
-        
-        # Sum all checkpoint optimizer states
-        for checkpoint in checkpoints:
-            checkpoint_opt_state = checkpoint['optimizer_state'][opt_idx]
-            
-            for key in checkpoint_opt_state['state']:
-                for state_key, state_value in checkpoint_opt_state['state'][key].items():
-                    if torch.is_tensor(state_value) and torch.is_floating_point(state_value):
-                        if key not in state_dict['state']:
-                            state_dict['state'][key] = {}
-                        if state_key not in state_dict['state'][key]:
-                            state_dict['state'][key][state_key] = torch.zeros_like(state_value)
-                        state_dict['state'][key][state_key] += state_value
-        
-        # Average the states
-        num_checkpoints = len(checkpoints)
-        for key in state_dict['state']:
-            for state_key, state_value in state_dict['state'][key].items():
-                if torch.is_tensor(state_value) and torch.is_floating_point(state_value):
-                    state_dict['state'][key][state_key] /= num_checkpoints
-        
-        optimizer.load_state_dict(state_dict)
-    
-    return averaged_optimizers
+    for opt_idx, optimizer in enumerate(optimizers):
+        if only_optimizers is not None and opt_idx not in only_optimizers:
+            continue  # don't break; skip this optimizer only
+
+        base_sd = optimizer.state_dict()
+        base_groups = base_sd["param_groups"]
+        base_state = base_sd["state"]
+
+        # Build traversal of (group_idx, param_idx, base_key)
+        idx_triplets = []
+        for gi, g in enumerate(base_groups):
+            for pi, base_key in enumerate(g["params"]):
+                idx_triplets.append((gi, pi, base_key))
+                # Ensure entry exists
+                if base_key not in base_state:
+                    base_state[base_key] = {}
+
+        # Accumulators: per-parameter dict of state_name -> accumulated tensor/number
+        accum: Dict[int, Dict[str, object]] = {bk: {} for _, _, bk in idx_triplets}
+
+        for ckpt in checkpoints:
+            ck_opt_sd = ckpt["optimizer_state"][opt_idx]
+            ck_groups = ck_opt_sd["param_groups"]
+            ck_state = ck_opt_sd["state"]
+
+            for gi, pi, base_key in idx_triplets:
+                if gi >= len(ck_groups) or pi >= len(ck_groups[gi]["params"]):
+                    continue
+                ckey = ck_groups[gi]["params"][pi]
+                if ckey not in ck_state:
+                    continue
+                c_entry = ck_state[ckey]
+                for sname, sval in c_entry.items():
+                    # We handle tensors (float/int) and python numbers (step counters).
+                    if torch.is_tensor(sval):
+                        if torch.is_floating_point(sval):
+                            val = sval.detach().to(torch.float32, copy=False).cpu()
+                        else:
+                            val = sval.detach().to(torch.int64, copy=False).cpu()
+                        prev = accum[base_key].get(sname)
+                        accum[base_key][sname] = (val.clone() if prev is None else prev + val)
+                    elif isinstance(sval, (int, float)):
+                        prev = accum[base_key].get(sname)
+                        accum[base_key][sname] = (sval if prev is None else prev + sval)
+                    # else: ignore non-numeric state types
+
+        # Write back averaged states, preserving dtype/device of existing base state entries when possible.
+        for _, _, base_key in idx_triplets:
+            if not accum[base_key]:
+                continue
+            dest = base_state.get(base_key, {})
+            for sname, acc_val in accum[base_key].items():
+                if torch.is_tensor(acc_val):
+                    # Choose target dtype/device from existing dest if present
+                    if sname in dest and torch.is_tensor(dest[sname]):
+                        target = dest[sname]
+                        if torch.is_floating_point(target):
+                            avg_val = (acc_val / num_ckpts).to(dtype=target.dtype, device=target.device)
+                        else:
+                            avg_val = torch.div(acc_val, num_ckpts, rounding_mode="floor").to(dtype=target.dtype, device=target.device)
+                    else:
+                        # Default to float average on CPU if we have no hint
+                        avg_val = (acc_val / num_ckpts)
+                    dest[sname] = avg_val
+                else:
+                    # Python numbers: simple average and cast back to int for counters like "step"
+                    mean_val = acc_val / num_ckpts
+                    if sname == "step":
+                        mean_val = int(mean_val)
+                    dest[sname] = mean_val
+            base_state[base_key] = dest
+
+        # Load averaged state back into the *same* optimizer (in-place)
+        optimizer.load_state_dict(base_sd)
+
+    return optimizers
 
 @torch.no_grad()
-def average_models(model, checkpoints: list):
-    avg_state_cpu = averaged_state_dict(checkpoints)  # CPU, fp32
-    averaged_model = copy.deepcopy(model)             # keep compiled wrapper semantics same as before
+def average_models(
+    model,
+    checkpoints: list,
+    include_optimizers: Optional[Set[int]] = None,
+    name_to_opt: Optional[Dict[str, Optional[int]]] = None,
+):
+    avg_state_cpu = averaged_state_dict(
+        checkpoints,
+        include_optimizers=include_optimizers,
+        name_to_opt=name_to_opt,
+    )  # CPU, fp32 (possibly partial)    averaged_model = copy.deepcopy(model)             # keep compiled wrapper semantics same as before
     load_state_dict_inplace(averaged_model, avg_state_cpu)
     return averaged_model
 
