@@ -14,29 +14,12 @@ def estimate_loss(model, batch, step, val_steps):
     assert len(batch) == val_steps
     return loss / len(batch)
 
-def average_models(model, checkpoints: list):
-    average_model = copy.deepcopy(model)
-    state_dict = average_model.state_dict()
-
-    # define the different trajectory models
-    for name, param in state_dict.items():
-        # Initialize with zeros
-        param.data.zero_()
-    
-        # Sum all checkpoint parameters
-        for checkpoint in checkpoints:
-            param.data += checkpoint['model_state_dict'][name].data
-        
-        param.data /= len(checkpoints)
-
-    return average_model
-
 @torch.no_grad()
 def averaged_state_dict(checkpoints: list) -> dict[str, torch.Tensor]:
     assert len(checkpoints) > 0
 
     keys = list(checkpoints[0]['model_state_dict'].keys())
-    avg = dict[str, torch.Tensor] = {}
+    avg: dict[str, torch.Tensor] = {}
 
     for k in keys:
         acc = None
@@ -60,10 +43,13 @@ def load_state_dict_inplace(model: torch.nn.Module, avg_state_cpu: dict[str, tor
         src = avg_state_cpu[k].to(device=dest.device, dtype=dest.dtype, non_blocking=True)
         dest.copy_(src, non_blocking=True)
 
-def average_optimizer_states(optimizers, checkpoints: list):
+def average_optimizer_states(optimizers, checkpoints: list, only_optimizers: list[int] = []):
     averaged_optimizers = copy.deepcopy(optimizers)
     
     for opt_idx, optimizer in enumerate(averaged_optimizers):
+        if only_optimizers and opt_idx not in only_optimizers:
+            break
+
         state_dict = optimizer.state_dict()
         
         # Zero out the state
@@ -95,6 +81,13 @@ def average_optimizer_states(optimizers, checkpoints: list):
         optimizer.load_state_dict(state_dict)
     
     return averaged_optimizers
+
+@torch.no_grad()
+def average_models(model, checkpoints: list):
+    avg_state_cpu = averaged_state_dict(checkpoints)  # CPU, fp32
+    averaged_model = copy.deepcopy(model)             # keep compiled wrapper semantics same as before
+    load_state_dict_inplace(averaged_model, avg_state_cpu)
+    return averaged_model
 
 def draw_checkpoint_landscape(last_3_checkpoints, step, val_steps, device, batch, model, grid_size=7):
     # need this last_3_checkpoints to be a list of one sized dictionaries

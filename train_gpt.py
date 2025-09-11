@@ -582,8 +582,8 @@ class Hyperparameters:
     interval_between_checkpoints = 50 # how often to save checkpoints for averaging
     update_interval = 50 # how often to update and evaluate the averaged model
     model_update_interval = 1000 # how often to update the model with the averaged model
-    # model_average_timestep = 700
-    model_average_timestep = 100
+    model_average_timestep = 750
+    # model_average_timestep = 100
 shared.args = Hyperparameters()
 args = shared.args
 
@@ -597,6 +597,33 @@ torch.cuda.set_device(device)
 dist.init_process_group(backend="nccl", device_id=device)
 dist.barrier()
 master_process = (rank == 0) # this process will do logging, checkpointing etc.
+
+# def apply_fast_dev_overrides():
+#     fast = os.getenv("FAST_DEV_RUN", "0") == "1"
+#     if not fast:
+#         return
+
+#     # tiny run
+#     args.num_iterations = 2
+#     args.val_loss_every = 0         # no validation while debugging
+#     args.train_seq_len = 1024       # must be multiple of 128
+#     args.val_seq_len = 1024
+#     args.val_tokens = 1024 * 8
+
+#     # features that add overhead, off
+#     args.checkpoint_averaging = False
+#     args.model_update_interval = 10**9
+
+#     # kill warmup
+#     global warmup_steps
+#     warmup_steps = 0
+
+#     # quiet W&B by default
+#     os.environ.setdefault("WANDB_DISABLED", "true")
+
+# apply_fast_dev_overrides()
+
+
 
 # begin logging
 logfile = None
@@ -788,14 +815,18 @@ for step in range(train_steps + 1):
                 batch.append([inputs, targets])
 
             val_loss = estimate_loss(model, batch, step, val_steps)
-            
+
+            original_cpu = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+ 
             # Compute trajectory loss if we have enough checkpoints
             trajectory_loss = None
+            # print0(f'{len(checkpoint_list)=}')
             if checkpoint_averaging and len(checkpoint_list) >= 3:
-                trajectory_model = average_models(model, checkpoint_list[-3:])
-                trajectory_loss = estimate_loss(trajectory_model, batch, step, val_steps)
+                avg_state_cpu = averaged_state_dict(checkpoint_list[-3:])
+                load_state_dict_inplace(model, avg_state_cpu)
+                trajectory_loss = estimate_loss(model, batch, step, val_steps)
                 print0(f'{trajectory_loss=}')
-                del trajectory_model
+                load_state_dict_inplace(model, original_cpu)
         model.load_state_dict(original_model)
 
 
