@@ -582,8 +582,10 @@ class Hyperparameters:
     interval_between_checkpoints = 50 # how often to save checkpoints for averaging
     update_interval = 50 # how often to update and evaluate the averaged model
     model_update_interval = 1000 # how often to update the model with the averaged model
-    model_average_timestep = 1000
-    # model_average_timestep = 100
+
+    # model_average_timestep = 750
+    model_average_timestep = 1400
+
 shared.args = Hyperparameters()
 args = shared.args
 
@@ -702,8 +704,23 @@ name_to_opt, _ = build_param_owner_maps(model, optimizers)
 def get_lr(step: int):
     x = step / args.num_iterations # progress in training
     assert 0 <= x < 1
+    # if x < args.model_average_timestep/args.num_iterations:
+    #     return 1.0
+    # if x < 1000/args.num_iterations:
+    #     return 1.0
+    # elif x < (args.model_average_timestep + 300)/args.num_iterations:
+    #     # want a linear transition from 0.1 to 1.0 over 300 steps
+    #     w = (x - args.model_average_timestep/args.num_iterations) * (args.num_iterations / 300)
+    #     return (1 - w) * 0.1 + w * 0.5
+    # elif x < (args.model_average_timestep + 300)/args.num_iterations:
+    #     # want a linear transition from 0.1 to 1.0 over 300 steps
+    #     w = (x - args.model_average_timestep/args.num_iterations) * (args.num_iterations / 300)
+    #     return (1 - w) * 0.1 + w * 0.5
     if x < 1 - args.cooldown_frac:
         return 1.0
+    # elif x >= 1 - args.cooldown_frac and x < 1400/args.num_iterations:
+
+    #     :
     else:
         w = (1 - x) / args.cooldown_frac
         return w * 1.0 + (1 - w) * 0.1
@@ -827,22 +844,23 @@ for step in range(train_steps + 1):
                 avg_state_cpu = averaged_state_dict(checkpoint_list[-3:])
                 load_state_dict_inplace(model, avg_state_cpu)
                 trajectory_loss = estimate_loss(model, batch, step, val_steps)
-                print0(f'{trajectory_loss=}')
+                print0(f'{trajectory_loss=}', console=True)
                 load_state_dict_inplace(model, original_cpu)
+        
         model.load_state_dict(original_model)
 
 
         del val_loader
         # dist.all_reduce(val_loss, op=dist.ReduceOp.AVG)
-        if trajectory_model_dict is not None and checkpoint_averaging and step % update_interval == 0:
-            for key, loss in trajectory_model_loss_dict.items():
-                dist.all_reduce(loss, op=dist.ReduceOp.AVG)
+        # if trajectory_model_dict is not None and checkpoint_averaging and step % update_interval == 0:
+        #     for key, loss in trajectory_model_loss_dict.items():
+        #         dist.all_reduce(loss, op=dist.ReduceOp.AVG)
             # dist.all_reduce(trajectory_model_loss_dict, op=dist.ReduceOp.AVG) 
             # dist.all_reduce(trajectory_model_dict, op=dist.ReduceOp.AVG)
             # will this distribute the loss?
 
         print0(f"step:{step}/{train_steps} val_loss:{val_loss:.4f} train_time:{training_time_ms:.0f}ms step_avg:{training_time_ms/max(step, 1):.2f}ms", console=True)
-        print0(trajectory_model_loss_dict)
+        # print0(trajectory_model_loss_dict)
         
         # Log to wandb
         if master_process:
@@ -856,9 +874,9 @@ for step in range(train_steps + 1):
                 log_dict["trajectory_loss"] = trajectory_loss.item()
             
             # Add trajectory model losses if available
-            if trajectory_model_loss_dict is not None:
-                for key, loss_tensor in trajectory_model_loss_dict.items():
-                    log_dict[f"trajectory_model_{key}"] = loss_tensor.item() if torch.is_tensor(loss_tensor) else loss_tensor
+            # if trajectory_model_loss_dict is not None:
+            #     for key, loss_tensor in trajectory_model_loss_dict.items():
+            #         log_dict[f"trajectory_model_{key}"] = loss_tensor.item() if torch.is_tensor(loss_tensor) else loss_tensor
             
             wandb.log(log_dict, step=step)
         
@@ -881,7 +899,7 @@ for step in range(train_steps + 1):
         avg_state = averaged_state_dict(checkpoint_list[-3:])
         load_state_dict_inplace(model, avg_state)
 
-        optimizers = average_optimizer_states(optimizers, checkpoint_list[-3:])
+        # optimizers = average_optimizer_states(optimizers, checkpoint_list[-3:])
 
     if last_step:
         if master_process and args.save_checkpoint:
@@ -901,6 +919,8 @@ for step in range(train_steps + 1):
     for group in optimizer2.param_groups:
         frac = min(step / 300, 1) # momentum warmup for muon
         group["momentum"] = (1 - frac) * 0.85 + frac * 0.95
+        # if step == args.model_average_timestep:
+            # group["momentum"] = 0.2 # reset momentum on model averaging step
     # step the optimizers - training step no??
     for opt in optimizers:
         opt.step()
