@@ -582,7 +582,8 @@ class Hyperparameters:
     interval_between_checkpoints = 50 # how often to save checkpoints for averaging
     update_interval = 50 # how often to update and evaluate the averaged model
     model_update_interval = 1000 # how often to update the model with the averaged model
-    model_average_timestep = 700
+    # model_average_timestep = 700
+    model_average_timestep = 100
 shared.args = Hyperparameters()
 args = shared.args
 
@@ -727,10 +728,14 @@ for step in range(train_steps + 1):
     # --------------- CHECKPOINT AVERAGING SECTION -----------------
     if checkpoint_averaging:
         if step % interval_between_checkpoints == 0:
+            cpu_state = {
+                k: v.detach().to('cpu') 
+                for k,v in model.state_dict().items()
+            }
             checkpoint_dict = {
                 'step': step, 
-                'model_state_dict': copy.deepcopy(model.state_dict()), 
-                'optimizer_state': [copy.deepcopy(x.state_dict()) for x in optimizers],
+                'model_state_dict': cpu_state, 
+                # 'optimizer_state': [copy.deepcopy(x.state_dict()) for x in optimizers],
             }
             checkpoint_list.append(checkpoint_dict)
             # Keep only the most recent num_checkpoints
@@ -813,8 +818,9 @@ for step in range(train_steps + 1):
                 "val_loss": val_loss.item(),
                 "train_time_ms": training_time_ms,
                 "step_avg_ms": training_time_ms/max(step, 1),
-                "trajectory_loss": trajectory_loss.item() if 'trajectory_loss' in locals() else None,
             }
+            if trajectory_loss is not None:
+                log_dict["trajectory_loss"] = trajectory_loss.item()
             
             # Add trajectory model losses if available
             if trajectory_model_loss_dict is not None:
@@ -837,7 +843,11 @@ for step in range(train_steps + 1):
         t0 = time.perf_counter()
 
     if step == args.model_average_timestep:
-        model = average_models(model, checkpoint_list[-3:]) # memory unsafe atm it seems
+        from utils import averaged_state_dict, load_state_dict_inplace
+        avg_state = averaged_state_dict(checkpoint_list[-3:])
+        load_state_dict_inplace(model, avg_state)
+
+        # model = average_models(model, checkpoint_list[-3:]) # memory unsafe atm it seems
         # optimizers = average_optimizer_states(optimizers, checkpoint_list[-3:])
 
     if last_step:

@@ -31,6 +31,35 @@ def average_models(model, checkpoints: list):
 
     return average_model
 
+@torch.no_grad()
+def averaged_state_dict(checkpoints: list) -> dict[str, torch.Tensor]:
+    assert len(checkpoints) > 0
+
+    keys = list(checkpoints[0]['model_state_dict'].keys())
+    avg = dict[str, torch.Tensor] = {}
+
+    for k in keys:
+        acc = None
+        for ckpt in checkpoints:
+            t = ckpt["model_state_dict"][k]
+            if t.device.type != "cpu":
+                t = t.detach().cpu()
+            t = t.to(torch.float32)
+            acc = t.clone() if acc is None else acc.add_(t)
+        avg[k] = acc.div_(len(checkpoints))
+    return avg
+
+@torch.no_grad()
+def load_state_dict_inplace(model: torch.nn.Module, avg_state_cpu: dict[str, torch.Tensor]) -> None:
+    """
+    Copies `avg_state_cpu` into `model` *in place*, preserving parameter objects.
+    Casts/dtypes are preserved per-parameter.
+    """
+    msd = model.state_dict()
+    for k, dest in msd.items():
+        src = avg_state_cpu[k].to(device=dest.device, dtype=dest.dtype, non_blocking=True)
+        dest.copy_(src, non_blocking=True)
+
 def average_optimizer_states(optimizers, checkpoints: list):
     averaged_optimizers = copy.deepcopy(optimizers)
     
