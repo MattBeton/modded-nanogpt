@@ -56,7 +56,7 @@ def average_optimizer_states(optimizers, checkpoints: list, only_optimizers: lis
         # Zero out the state
         for key in state_dict['state']:
             for state_key, state_value in state_dict['state'][key].items():
-                if torch.is_tensor(state_value):
+                if torch.is_tensor(state_value) and torch.is_floating_point(state_value):
                     state_value.zero_()
         
         # Sum all checkpoint optimizer states
@@ -65,7 +65,7 @@ def average_optimizer_states(optimizers, checkpoints: list, only_optimizers: lis
             
             for key in checkpoint_opt_state['state']:
                 for state_key, state_value in checkpoint_opt_state['state'][key].items():
-                    if torch.is_tensor(state_value):
+                    if torch.is_tensor(state_value) and torch.is_floating_point(state_value):
                         if key not in state_dict['state']:
                             state_dict['state'][key] = {}
                         if state_key not in state_dict['state'][key]:
@@ -76,7 +76,7 @@ def average_optimizer_states(optimizers, checkpoints: list, only_optimizers: lis
         num_checkpoints = len(checkpoints)
         for key in state_dict['state']:
             for state_key, state_value in state_dict['state'][key].items():
-                if torch.is_tensor(state_value):
+                if torch.is_tensor(state_value) and torch.is_floating_point(state_value):
                     state_dict['state'][key][state_key] /= num_checkpoints
         
         optimizer.load_state_dict(state_dict)

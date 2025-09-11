@@ -582,8 +582,8 @@ class Hyperparameters:
     interval_between_checkpoints = 50 # how often to save checkpoints for averaging
     update_interval = 50 # how often to update and evaluate the averaged model
     model_update_interval = 1000 # how often to update the model with the averaged model
-    model_average_timestep = 750
-    # model_average_timestep = 100
+    # model_average_timestep = 750
+    model_average_timestep = 100
 shared.args = Hyperparameters()
 args = shared.args
 
@@ -762,7 +762,7 @@ for step in range(train_steps + 1):
             checkpoint_dict = {
                 'step': step, 
                 'model_state_dict': cpu_state, 
-                # 'optimizer_state': [copy.deepcopy(x.state_dict()) for x in optimizers],
+                'optimizer_state': [copy.deepcopy(x.state_dict()) for x in optimizers],
             }
             checkpoint_list.append(checkpoint_dict)
             # Keep only the most recent num_checkpoints
@@ -795,7 +795,7 @@ for step in range(train_steps + 1):
 
         # we now have a dictionary of trajectory models to evaluate
     # --------------- VALIDATION SECTION  -----------------
-    if last_step or (args.val_loss_every > 0 and step % args.val_loss_every == 0):
+    if last_step or (args.val_loss_every > 0 and step % args.val_loss_every == 0) or ((step - args.model_average_timestep) < 50 and step > args.model_average_timestep):
         # stop the clock
         torch.cuda.synchronize()
         training_time_ms += 1000 * (time.perf_counter() - t0)
@@ -875,11 +875,11 @@ for step in range(train_steps + 1):
 
     if step == args.model_average_timestep:
         from utils import averaged_state_dict, load_state_dict_inplace
+        print0('averaging model and loading in!', console=True)
         avg_state = averaged_state_dict(checkpoint_list[-3:])
         load_state_dict_inplace(model, avg_state)
 
-        # model = average_models(model, checkpoint_list[-3:]) # memory unsafe atm it seems
-        # optimizers = average_optimizer_states(optimizers, checkpoint_list[-3:])
+        optimizers = average_optimizer_states(optimizers, checkpoint_list[-3:])
 
     if last_step:
         if master_process and args.save_checkpoint:
