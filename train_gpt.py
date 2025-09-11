@@ -831,7 +831,7 @@ for step in range(train_steps + 1):
 
 
         del val_loader
-        dist.all_reduce(val_loss, op=dist.ReduceOp.AVG)
+        # dist.all_reduce(val_loss, op=dist.ReduceOp.AVG)
         if trajectory_model_dict is not None and checkpoint_averaging and step % update_interval == 0:
             for key, loss in trajectory_model_loss_dict.items():
                 dist.all_reduce(loss, op=dist.ReduceOp.AVG)

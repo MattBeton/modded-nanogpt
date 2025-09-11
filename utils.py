@@ -12,6 +12,7 @@ def estimate_loss(model, batch, step, val_steps):
     for [inputs, targets] in batch:
         loss += model(inputs, targets, get_window_size_blocks(step))
     assert len(batch) == val_steps
+    dist.all_reduce(loss, op=dist.ReduceOp.AVG)
     return loss / len(batch)
 
 @torch.no_grad()
@@ -182,7 +183,6 @@ def draw_checkpoint_landscape(last_3_checkpoints, step, val_steps, device, batch
                 current_loss = estimate_loss(model, batch, step, val_steps)
 
                 dist.all_reduce(current_loss, op=dist.ReduceOp.AVG)
-                
                 loss_grid[j, i] = current_loss
                 
                 # Track best loss point
