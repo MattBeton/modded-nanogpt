@@ -730,7 +730,7 @@ for step in range(train_steps + 1):
             checkpoint_dict = {
                 'step': step, 
                 'model_state_dict': copy.deepcopy(model.state_dict()), 
-                'optimizer_state': (copy.deepcopy(x.state_dict()) for x in optimizers),
+                'optimizer_state': [copy.deepcopy(x.state_dict()) for x in optimizers],
             }
             checkpoint_list.append(checkpoint_dict)
             # Keep only the most recent num_checkpoints

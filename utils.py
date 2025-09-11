@@ -3,7 +3,9 @@ import numpy as np
 import torch
 import torch.distributed as dist
 from copy import deepcopy
+import copy
 import wandb
+from shared import get_window_size_blocks
 
 def estimate_loss(model, batch, step, val_steps):
     loss = 0
@@ -28,6 +30,42 @@ def average_models(model, checkpoints: list):
         param.data /= len(checkpoints)
 
     return average_model
+
+def average_optimizer_states(optimizers, checkpoints: list):
+    averaged_optimizers = copy.deepcopy(optimizers)
+    
+    for opt_idx, optimizer in enumerate(averaged_optimizers):
+        state_dict = optimizer.state_dict()
+        
+        # Zero out the state
+        for key in state_dict['state']:
+            for state_key, state_value in state_dict['state'][key].items():
+                if torch.is_tensor(state_value):
+                    state_value.zero_()
+        
+        # Sum all checkpoint optimizer states
+        for checkpoint in checkpoints:
+            checkpoint_opt_state = checkpoint['optimizer_state'][opt_idx]
+            
+            for key in checkpoint_opt_state['state']:
+                for state_key, state_value in checkpoint_opt_state['state'][key].items():
+                    if torch.is_tensor(state_value):
+                        if key not in state_dict['state']:
+                            state_dict['state'][key] = {}
+                        if state_key not in state_dict['state'][key]:
+                            state_dict['state'][key][state_key] = torch.zeros_like(state_value)
+                        state_dict['state'][key][state_key] += state_value
+        
+        # Average the states
+        num_checkpoints = len(checkpoints)
+        for key in state_dict['state']:
+            for state_key, state_value in state_dict['state'][key].items():
+                if torch.is_tensor(state_value):
+                    state_dict['state'][key][state_key] /= num_checkpoints
+        
+        optimizer.load_state_dict(state_dict)
+    
+    return averaged_optimizers
 
 def draw_checkpoint_landscape(last_3_checkpoints, step, val_steps, device, batch, model, grid_size=7):
     # need this last_3_checkpoints to be a list of one sized dictionaries
