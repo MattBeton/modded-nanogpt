@@ -26,9 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # (train_gpt.py's torch.cuda._compile_kernel uses /usr/local/cuda/include).
 WORKDIR /opt/modded-nanogpt
 COPY requirements.txt .
-RUN pip install --upgrade pip \
-    && pip install torch==2.10 --index-url https://download.pytorch.org/whl/cu128 \
-    && pip install -r requirements.txt \
+RUN python -m pip install torch==2.10 --index-url https://download.pytorch.org/whl/cu128 \
+    && python -m pip install -r requirements.txt \
     && python -c "import torch, triton; v = torch.version.cuda; print(torch.__version__, triton.__version__, v); assert v.startswith('12.8'), v"
 
 # Pre-fetch the Flash Attention 3 build used by train_gpt.py so a fresh pod does not hit the HF hub at start.
