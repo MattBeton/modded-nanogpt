@@ -13,6 +13,7 @@ with open(os.path.join(os.path.dirname(sys.argv[0]), 'dc_triton_kernels.py'), 'r
 
 import copy
 import glob
+from contextlib import nullcontext
 import math
 import threading
 import time
@@ -48,6 +49,24 @@ from dc_triton_kernels import (
 ReLUSqrdMLP = FusedLinearReLUSquareFunction.apply
 
 dynamo.config.recompile_limit = 64
+
+# -----------------------------------------------------------------------------
+# Profiling (optional, see profile/README.md)
+# PROFILE_STEPS="20:26,860:866" records torch.profiler traces of the given [start, end) step windows on
+# every rank (one extra warmup step precedes each window), writes them to $PROFILE_DIR/<run_id>/ and
+# exits after the last window. Phase markers (rf) are no-ops unless profiling is enabled.
+def _parse_profile_windows(spec: str) -> list[tuple[int, int]]:
+    windows = []
+    for part in filter(None, spec.replace(" ", "").split(",")):
+        start, end = map(int, part.split(":"))
+        assert 1 <= start < end, f"bad PROFILE_STEPS window {part}"
+        windows.append((start, end))
+    return sorted(windows)
+
+PROFILE_WINDOWS = _parse_profile_windows(os.environ.get("PROFILE_STEPS", ""))
+
+def rf(name: str):
+    return torch.profiler.record_function(name) if PROFILE_WINDOWS else nullcontext()
 
 # -----------------------------------------------------------------------------
 # Distributed training setup
@@ -761,7 +780,8 @@ class NorMuonAndAdam:
             if label == "embed" and not self.split_embed:
                 continue
 
-            self._launch_reduce(param, param.grad)
+            with rf(f"opt/scatter/{label}"):
+                self._launch_reduce(param, param.grad)
 
         # ===== Phase 2: Process updates in work_order =====
         gather_futures = []
@@ -776,25 +796,28 @@ class NorMuonAndAdam:
             if p_cfg.optim == "adam" and not do_adam:
                 continue
             # Wait for reduce
-            if p_cfg.comms != "sharded_sparse":
-                future, grad_chunk = self._reduce_futures[param]
-                if future is not None:
-                    future.wait()
-            else:
-                idxes_fut, recv_idxes, recv_fut, recv_vals = self._reduce_futures[param]
-                idxes_fut.wait()
-                recv_fut.wait()
+            with rf(f"opt/wait/{label}"):
+                if p_cfg.comms != "sharded_sparse":
+                    future, grad_chunk = self._reduce_futures[param]
+                    if future is not None:
+                        future.wait()
+                else:
+                    idxes_fut, recv_idxes, recv_fut, recv_vals = self._reduce_futures[param]
+                    idxes_fut.wait()
+                    recv_fut.wait()
 
-                grad_chunk = sparse_comms_merge_gradients(param.grad, recv_idxes, recv_vals, rank, world_size)
+                    grad_chunk = sparse_comms_merge_gradients(param.grad, recv_idxes, recv_vals, rank, world_size)
 
             # Apply update based on optim type
-            if p_cfg.optim == "adam":
-                p_slice = self._adam_update(param, grad_chunk, p_cfg, rank)
-            else:
-                p_slice = self._normuon_update(param, grad_chunk, p_cfg, rank)
+            with rf(f"opt/update/{label}"):
+                if p_cfg.optim == "adam":
+                    p_slice = self._adam_update(param, grad_chunk, p_cfg, rank)
+                else:
+                    p_slice = self._normuon_update(param, grad_chunk, p_cfg, rank)
             # Launch gather for sharded params
             if p_cfg.comms.startswith("sharded") and self.world_size > 1:
-                gather_fut = self._launch_gather(param, p_slice)
+                with rf(f"opt/gather/{label}"):
+                    gather_fut = self._launch_gather(param, p_slice)
                 if label == "lm_head":
                     lm_head_gather_future = gather_fut
                 else:
@@ -802,16 +825,17 @@ class NorMuonAndAdam:
 
         # ===== Phase 3: Wait for gathers, sync embed if tied =====
         # Wait for lm_head gather first so we can copy to embed while other gathers complete
-        if lm_head_gather_future is not None:
-            lm_head_gather_future.wait()
+        with rf("opt/finalize"):
+            if lm_head_gather_future is not None:
+                lm_head_gather_future.wait()
 
-        # When tied: copy lm_head.T to embed (tiled Triton transpose for coalesced writes)
-        if do_adam and not self.split_embed and embed_param is not None and lm_param is not None:
-            transpose_copy(lm_param.data, embed_param.data)
+            # When tied: copy lm_head.T to embed (tiled Triton transpose for coalesced writes)
+            if do_adam and not self.split_embed and embed_param is not None and lm_param is not None:
+                transpose_copy(lm_param.data, embed_param.data)
 
-        # Wait for remaining gathers
-        for fut in gather_futures:
-            fut.wait()
+            # Wait for remaining gathers
+            for fut in gather_futures:
+                fut.wait()
 
         self._reduce_futures.clear()
         self._sparse_async_data.clear()
@@ -879,35 +903,38 @@ class NorMuonAndAdam:
 
         # Fused Nesterov momentum + Polar Express orthogonalization
         is_large_matrix = chunk_shape[-2] > 1024
-        v_chunk = polar_express(
-            grad_chunk, p_state["momentum_buffer"], self._momentum_t,
-            split_baddbmm=is_large_matrix,
-        )
+        with rf("pe"):
+            v_chunk = polar_express(
+                grad_chunk, p_state["momentum_buffer"], self._momentum_t,
+                split_baddbmm=is_large_matrix,
+            )
 
         # Variance reduction
         red_dim = -1 if chunk_shape[-2] >= chunk_shape[-1] else -2
-        v_chunk = NorMuonAndAdam._apply_normuon_variance_reduction(
-            v_chunk, p_state["second_momentum_buffer"], p_cfg.beta2, red_dim
-        )
+        with rf("normuon_vr"):
+            v_chunk = NorMuonAndAdam._apply_normuon_variance_reduction(
+                v_chunk, p_state["second_momentum_buffer"], p_cfg.beta2, red_dim
+            )
 
         # Update parameter, in place, with cautious weight decay
         param_view = param.data.view(p_cfg.reshape)
         p_slice = param_view[rank * p_cfg.chunk_size:(rank + 1) * p_cfg.chunk_size]
 
         # MLP has per-matrix LR multipliers (c_proj gets 2x LR)
-        if p_cfg.per_matrix_lr_mul is not None:
-            self._eff_wd_t.fill_(p_cfg.wd_mul * p_cfg.weight_decay * p_cfg.lr)
-            for mat_idx in range(p_cfg.chunk_size):
-                self._eff_lr_t.fill_(p_cfg.lr_mul * p_cfg.per_matrix_lr_mul[mat_idx] * p_cfg.lr)
+        with rf("cautious_update"):
+            if p_cfg.per_matrix_lr_mul is not None:
+                self._eff_wd_t.fill_(p_cfg.wd_mul * p_cfg.weight_decay * p_cfg.lr)
+                for mat_idx in range(p_cfg.chunk_size):
+                    self._eff_lr_t.fill_(p_cfg.lr_mul * p_cfg.per_matrix_lr_mul[mat_idx] * p_cfg.lr)
+                    NorMuonAndAdam._cautious_wd_and_update_inplace(
+                        p_slice[mat_idx].view(torch.uint16), p_state["mantissa"][mat_idx], v_chunk[mat_idx],
+                        self._eff_wd_t, self._eff_lr_t
+                    )
+            else:
                 NorMuonAndAdam._cautious_wd_and_update_inplace(
-                    p_slice[mat_idx].view(torch.uint16), p_state["mantissa"][mat_idx], v_chunk[mat_idx],
+                    p_slice.view(torch.uint16), p_state["mantissa"], v_chunk,
                     self._eff_wd_t, self._eff_lr_t
                 )
-        else:
-            NorMuonAndAdam._cautious_wd_and_update_inplace(
-                p_slice.view(torch.uint16), p_state["mantissa"], v_chunk,
-                self._eff_wd_t, self._eff_lr_t
-            )
 
         return p_slice
 
@@ -2307,6 +2334,37 @@ train_loader = distributed_data_generator(args.train_files, TRAINING_STAGES[0].b
 
 gc.collect()
 
+profiler = None
+if PROFILE_WINDOWS:
+    from torch.profiler import ProfilerAction, ProfilerActivity
+    _run_id = [args.run_id]
+    dist.broadcast_object_list(_run_id, src=0)  # args.run_id is a per-process uuid; share rank 0's
+    profile_dir = Path(os.environ.get("PROFILE_DIR", "profiles")) / _run_id[0]
+    profile_dir.mkdir(parents=True, exist_ok=True)
+
+    def _profile_schedule(step_num: int) -> ProfilerAction:
+        for start, end in PROFILE_WINDOWS:
+            if step_num == start - 1:
+                return ProfilerAction.WARMUP
+            if start <= step_num < end - 1:
+                return ProfilerAction.RECORD
+            if step_num == end - 1:
+                return ProfilerAction.RECORD_AND_SAVE
+        return ProfilerAction.NONE
+
+    def _on_trace_ready(prof):
+        start, end = next(w for w in PROFILE_WINDOWS if w[1] == prof.step_num)
+        path = profile_dir / f"rank{rank}_steps{start}-{end}.json"
+        prof.export_chrome_trace(str(path))
+        print0(f"wrote profiler trace to {path}", console=True)
+
+    profiler = torch.profiler.profile(
+        activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+        schedule=_profile_schedule, on_trace_ready=_on_trace_ready,
+    )
+    profiler.start()
+    print0(f"Profiling step windows {PROFILE_WINDOWS}, will exit after step {PROFILE_WINDOWS[-1][1]}", console=True)
+
 training_time_ms = 0
 # start the clock
 torch.cuda.synchronize()
@@ -2354,19 +2412,31 @@ for step in range(train_steps + 1):
         break
 
     # --------------- TRAINING SECTION -----------------
-    for idx in range(grad_accum_steps):
-        inputs, targets, cum_seqlens, bigram_inputs, bigram_cpu = train_loader.send(training_manager.train_loader_send_args)
-        training_manager.sparse_index_update(step, bigram_cpu)
-        loss = model(inputs, targets, cum_seqlens, bigram_inputs, training_manager.get_forward_args()).sum() * grad_scale
-        training_manager.sparse_index_share(step)
-        loss.backward()
-        del loss
-    training_manager.step_optimizers(step)
-    model.quantize_mlp_fp8(bootstrap_down=(step < 16))
+    with rf("step"):
+        for idx in range(grad_accum_steps):
+            with rf("dataload"):
+                inputs, targets, cum_seqlens, bigram_inputs, bigram_cpu = train_loader.send(training_manager.train_loader_send_args)
+            training_manager.sparse_index_update(step, bigram_cpu)
+            with rf("fwd"):
+                loss = model(inputs, targets, cum_seqlens, bigram_inputs, training_manager.get_forward_args()).sum() * grad_scale
+            training_manager.sparse_index_share(step)
+            with rf("bwd"):
+                loss.backward()
+            del loss
+        with rf("opt"):
+            training_manager.step_optimizers(step)
+        with rf("fp8_quant"):
+            model.quantize_mlp_fp8(bootstrap_down=(step < 16))
 
     # logging
     approx_training_time_ms = training_time_ms + 1000 * (time.perf_counter() - t0)
     print0(f"step:{step+1}/{train_steps} train_time:{approx_training_time_ms:.0f}ms step_avg:{approx_training_time_ms/(step + 1):.2f}ms", console=True)
+
+    if profiler is not None:
+        profiler.step()
+        if step + 1 >= PROFILE_WINDOWS[-1][1]:
+            profiler.stop()
+            break
 
 if args.run_evals:
     model.eval()

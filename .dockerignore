@@ -1,0 +1,9 @@
+.git
+data/fineweb10B
+logs
+profiles
+records
+img
+__pycache__
+**/__pycache__
+.DS_Store
