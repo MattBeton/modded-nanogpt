@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=1 \
     PYTHONUNBUFFERED=1 \
     HF_HOME=/root/.cache/huggingface \
-    PATH=/usr/local/cuda/bin:/usr/local/cuda/nsight-compute:${PATH}
+    PATH=/usr/local/cuda/bin:${PATH}
 
 # Ubuntu 24.04 ships Python 3.12. ncu / nsys come from the CUDA apt repo already configured in the base image.
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -18,8 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
     && ln -sf /usr/bin/python3 /usr/local/bin/python \
     && ln -sf /usr/bin/pip3 /usr/local/bin/pip \
-    && ln -sf "$(ls -d /usr/local/cuda/nsight-compute-*/ncu | head -1)" /usr/local/bin/ncu \
-    && ln -sf "$(ls -d /usr/local/cuda/nsight-systems-*/bin/nsys | head -1)" /usr/local/bin/nsys \
+    && ln -sf "$(ls -d /opt/nvidia/nsight-compute/*/ncu | head -1)" /usr/local/bin/ncu \
+    && { command -v nsys || ln -sf "$(ls -d /opt/nvidia/nsight-systems/*/target-linux-x64/nsys | head -1)" /usr/local/bin/nsys; } \
     && ncu --version | tail -1 && nsys --version
 
 # torch pinned to the CUDA 12.8 build so torch.version.cuda matches the toolkit in this image
