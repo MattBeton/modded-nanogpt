@@ -141,6 +141,19 @@ class Trace:
         for corr, (tid, ts) in launch_by_corr.items():
             launches_by_tid[tid].append((ts, corr))
 
+        # The autograd engine launches the compiled backward from its own thread, which carries no
+        # phase annotations, so those kernels would land in "other". The main thread is blocked
+        # inside loss.backward() while that happens, so fall back to whichever main-thread phase
+        # contains the launch in wall-clock time.
+        main_tid = next((a["tid"] for a in annotations if a["name"] == "step"), None)
+        main_anns = sorted((a for a in ann_by_tid.get(main_tid, []) if a["name"] in PHASES or a["name"] == "step"),
+                           key=lambda a: a["ts"])
+        main_starts = [a["ts"] for a in main_anns]
+
+        def main_stack_at(ts):
+            i = bisect.bisect_right(main_starts, ts)
+            return [a for a in main_anns[max(0, i - 64):i] if a["ts"] + a["dur"] > ts]
+
         self.stack_by_corr = {}
         for tid, anns in ann_by_tid.items():
             anns.sort(key=lambda a: (a["ts"], -a["dur"]))
@@ -156,7 +169,10 @@ class Trace:
                     ai += 1
                 while stack and stack[-1]["ts"] + stack[-1]["dur"] <= ts:
                     stack.pop()
-                self.stack_by_corr[corr] = list(stack)
+                own = list(stack)
+                if tid != main_tid and not any(a["name"] in PHASES for a in own):
+                    own = main_stack_at(ts) + own
+                self.stack_by_corr[corr] = own
 
         # Training-step annotations, indexed in time order
         self.step_anns = sorted([a for a in annotations if a["name"] == "step"], key=lambda a: a["ts"])
@@ -340,6 +356,22 @@ def report(tr: Trace, pe_detail: bool, top_n: int):
     for ph, d in s["phases"].items():
         pct = 100 * d["gpu_compute_ms"] / max(s["compute_busy_ms"], 1e-9)
         print(f"{ph:<10} {d['gpu_sum_ms']:8.2f} {d['gpu_compute_ms']:8.2f} {d['gpu_nccl_ms']:7.2f} {d['cpu_ms']:9.2f} {d['n']:8d} {pct:9.1f}%")
+
+    # The model's compiled region is a joint forward+backward graph, so the CPU-side fwd/bwd markers
+    # do not separate forward from backward work. Split by kernel provenance instead.
+    print(f"\n-- forward vs backward by kernel name, step {med} (ms) --")
+    fb = defaultdict(lambda: [0.0, 0])
+    for e in tr.gpu:
+        if e["_step"] != med or e["_cat"] == "nccl":
+            continue
+        n = e["name"]
+        kind = "backward" if ("backward" in n or "_bwd" in n) else ("fwd+bwd fused" if "fwd_bwd" in n else "forward/other")
+        fb[kind][0] += e["dur"] / 1000
+        fb[kind][1] += 1
+    tot_fb = sum(v[0] for v in fb.values())
+    for kind, (ms, n) in sorted(fb.items(), key=lambda kv: -kv[1][0]):
+        print(f"{kind:<16} {ms:8.2f} ms  {n:6d} kernels  {100 * ms / max(tot_fb, 1e-9):5.1f}%")
+    print("   (names are a heuristic; the joint graph means some backward work carries forward-looking names)")
 
     print(f"\n-- kernel category breakdown, step {med} (sum of kernel durations, ms) --")
     for cat, ms in sorted(s["cats"].items(), key=lambda kv: -kv[1]):
