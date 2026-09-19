@@ -79,7 +79,8 @@ fi
 
 # ---------------------------------------------------------------- the traces (THE deliverable)
 run_trace() {  # $1 = arm name
-  local arm=$1 dir="$OUT/trace_$arm"
+  local arm=$1
+  local dir="$OUT/trace_$arm"
   mkdir -p "$dir"
   log "--- trace [$arm]: nproc=$NGPU PROFILE_STEPS=$WINDOW ---"
   ( cd "$TREE" && PROFILE_STEPS="$WINDOW" PROFILE_DIR="$dir" \
