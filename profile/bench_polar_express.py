@@ -126,7 +126,9 @@ def _summarize_gaps(path, shapes, iters):
     data = json.load(open(path))["traceEvents"]
     ev = [e for e in data if e.get("ph") == "X"]
     ann = {e["name"]: e for e in ev if e.get("cat") == "user_annotation" and e["name"].startswith("pe/")}
-    launches = {e["args"]["correlation"]: e["ts"] for e in ev if e.get("cat") == "cuda_runtime" and "correlation" in e.get("args", {})}
+    # torch 2.10 records triton/cublas launches under cuda_driver (cuLaunchKernel), not cuda_runtime
+    launches = {e["args"]["correlation"]: e["ts"] for e in ev
+                if e.get("cat") in ("cuda_runtime", "cuda_driver") and "correlation" in e.get("args", {})}
     kern = [e for e in ev if e.get("cat") == "kernel"]
     print(f"\n{'label':<9} {'kernels/call':>12} {'kernel_us':>10} {'gap_us':>8} {'span_us':>8} {'gap%':>6}")
     for label in shapes:
