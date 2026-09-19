@@ -266,6 +266,46 @@ the critical path. `linear_relu_square_kernel` (10.7% of step) and the RMS-norm 
 kernels (~10%) are each 3-10x the original PE prize and ~30x the bankable one, with no comms
 hiding them.
 
+## 7d. MEASURED: PR #360's cascade does NOT close the gaps (2026-09-19)
+
+§7c called the thesis dead partly on inference about #360's code. Measured instead, on the pod,
+using their `train_gpt.py` + their `triton_kernels.py` (XXT_kernel / XTX_kernel /
+ba_plus_cAA_kernel verified byte-identical to master's), on their own per-rank chunk shapes
+(qk (6,256,768), vo (2,768,768), mlp (3,2816,768) -- all smaller than master's, since qk padded
+64->48 and vo 24->16).
+
+| | master polar_express | PR#360 anvil_cascade |
+|---|---|---|
+| maps / kernels per qk call | 5 / 18 | 6 / **25** |
+| baseline total | 0.901 ms | **1.211 ms (+34%)** |
+| qk eff. TFLOP/s | 37.1 | **25.3** (2.6% of peak) |
+| vo eff. TFLOP/s | 164 | 98 |
+| mlp eff. TFLOP/s | 306 | 250 |
+| qk gap% (profiled) | 75.9% | **77.6%** |
+| vo gap% | 68.0% | 71.1% |
+| CUDA-graph total | 0.662 ms | **0.857 ms** |
+
+**The PR makes the cascade more launch-bound, not less** -- one extra map and smaller banks
+(less parallelism per kernel). It recovers this at a higher level with graph capture of the whole
+bank-update body (29% here vs 27% on master), not by touching the cascade.
+
+**After their graphs the launch overhead is spent.** Per-bank kernel-busy floor is
+133/164/474 us = 0.771 ms against a graphed 0.857 ms, i.e. ~0.09 ms/step of residual overhead.
+What remains is 0.77 ms of genuine kernel time at 2.6% / 10% / ~30% of peak -- the only thing a
+fused kernel can still attack.
+
+**Revised arithmetic on the new baseline.** Their Muon banks are ~141 MB bf16, so NCCL ~0.55 ms
+against a graphed cascade of 0.857 ms: bankable ~0.3 ms/step ~= **0.39 s**, now against a
+**39.9 s** record instead of 74 s -- so ~**1.0%**, versus 0.4% on master. The cascade got more
+expensive while the record got shorter; both move the ratio the same way.
+
+**Verdict update:** §7c's "dead" was right for master and too strong for the new baseline. The
+structural objection is unchanged and still decisive: that 0.3 ms is bankable only if the cascade
+sits on the critical path rather than hidden under NCCL, which still needs an 8-GPU trace.
+Also note their docstring independently confirms the capture hazard we found: the 0-D scalars
+"must be the persistent 0-D CUDA mirrors ... a weight tensor here is a blocking H2D inside the
+graph (+1.4 ms/step)".
+
 ## 8. What I want the sanity-checker to attack
 
 1. **Is the §6 arithmetic right?** Especially: is 1285 steps x 0.901 ms the correct way to
