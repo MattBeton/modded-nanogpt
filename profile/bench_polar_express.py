@@ -67,6 +67,8 @@ def main():
     ap.add_argument("--trace", type=str, default=None, help="write a torch.profiler chrome trace of the timed loop")
     ap.add_argument("--ncu", action="store_true", help="cudaProfilerStart/Stop around one call per shape (for ncu --profile-from-start off)")
     ap.add_argument("--shapes", type=str, default=",".join(SHAPES), help="comma-separated subset of " + ",".join(SHAPES))
+    ap.add_argument("--cudagraph", action="store_true",
+                    help="capture one polar_express call per shape in a CUDA graph and time the replay")
     ap.add_argument("--mode", type=str, default=None,
                     help="torch.compile mode to use instead of train_gpt.py's own decorator, e.g. reduce-overhead")
     args = ap.parse_args()
@@ -103,6 +105,10 @@ def main():
             print(f"profiled one polar_express call for {label} {shapes[label]}")
         return
 
+    if args.cudagraph:
+        _bench_cudagraph(polar_express, shapes, inputs, device, args.iters)
+        return
+
     prof = None
     if args.trace:
         from torch.profiler import ProfilerActivity, profile
@@ -133,6 +139,55 @@ def main():
         prof.export_chrome_trace(args.trace)
         print(f"wrote {args.trace}")
         _summarize_gaps(args.trace, shapes, args.iters)
+
+
+def _bench_cudagraph(polar_express, shapes, inputs, device, iters):
+    """Replay-time of one polar_express call captured in a CUDA graph.
+
+    torch.compile(mode="reduce-overhead") refuses to apply cudagraphs here because polar_express
+    mutates its inputs (the in-place Nesterov lerp_ on grad_chunk / momentum_buffer). Capturing by
+    hand is fine for the training use: the momentum buffer is persistent optimizer state, and the
+    grad chunk can live in a fixed buffer that the all-gather writes into. momentum_t must move to
+    the GPU so the schedule can be updated between replays without re-capturing.
+    """
+    print(f"{'label':<9} {'':<16} {'graph':>10} {'graph+copy':>12}")
+    total_g = total_gc = 0.0
+    for label, shape in shapes.items():
+        grad, mom, _ = inputs[label]
+        split = shape[-2] > 1024
+        static_grad, static_mom = grad.clone(), mom.clone()
+        momentum_t = torch.tensor(0.95, device=device)  # on-GPU so replays see schedule updates
+        src = grad.clone()
+
+        s = torch.cuda.Stream()
+        s.wait_stream(torch.cuda.current_stream())
+        with torch.cuda.stream(s):
+            for _ in range(3):
+                polar_express(static_grad, static_mom, momentum_t, split_baddbmm=split)
+        torch.cuda.current_stream().wait_stream(s)
+
+        g = torch.cuda.CUDAGraph()
+        with torch.cuda.graph(g):
+            polar_express(static_grad, static_mom, momentum_t, split_baddbmm=split)
+
+        def timeit(fn):
+            for _ in range(5):
+                fn()
+            torch.cuda.synchronize()
+            a, b = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+            a.record()
+            for _ in range(iters):
+                fn()
+            b.record()
+            torch.cuda.synchronize()
+            return a.elapsed_time(b) / iters
+
+        ms_g = timeit(g.replay)
+        ms_gc = timeit(lambda: (static_grad.copy_(src), g.replay()))
+        total_g += ms_g
+        total_gc += ms_gc
+        print(f"{label:<9} {str(shape):<16} {ms_g:7.3f} ms {ms_gc:9.3f} ms")
+    print(f"{'total':<9} {'':<16} {total_g:7.3f} ms {total_gc:9.3f} ms")
 
 
 def _summarize_gaps(path, shapes, iters):
