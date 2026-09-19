@@ -60,9 +60,11 @@ def load_cascade(src: Path, mode=None):
 
     # Module-level constants the body references (coefficient tables, rail betas, ...).
     used = {n.id for n in ast.walk(fn_node) if isinstance(n, ast.Name)}
+    def bound_names(assign):  # handles tuple targets: a, b, c = 1, 2, 3
+        return {n.id for t in assign.targets for n in ast.walk(t) if isinstance(n, ast.Name)}
+
     consts = [n for n in tree.body
-              if isinstance(n, ast.Assign)
-              and any(getattr(t, "id", None) in used for t in n.targets)]
+              if isinstance(n, ast.Assign) and (bound_names(n) & used)]
 
     if mode is not None:
         fn_node = ast.parse(ast.unparse(fn_node)).body[0]  # detach from the original tree
