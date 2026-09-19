@@ -29,7 +29,10 @@ SHAPES = {
 }
 
 
-def load_polar_express():
+def load_polar_express(mode=None):
+    """Compile the polar_express from train_gpt.py. mode=None keeps train_gpt.py's own
+    @torch.compile(dynamic=False, fullgraph=True); a mode string (e.g. "reduce-overhead",
+    which wraps the graph in CUDA graphs) strips that decorator and recompiles instead."""
     tree = ast.parse((REPO / "train_gpt.py").read_text())
     wanted = []
     for node in tree.body:
@@ -38,9 +41,16 @@ def load_polar_express():
         if isinstance(node, ast.FunctionDef) and node.name == "polar_express":
             wanted.append(node)
     assert len(wanted) == 2, "could not find polar_express / polar_express_coeffs in train_gpt.py"
+    if mode is not None:
+        for node in wanted:
+            if isinstance(node, ast.FunctionDef):
+                node.decorator_list = []
     ns = dict(torch=torch, XXT=XXT, XTX=XTX, ba_plus_cAA=ba_plus_cAA)
     exec(compile(ast.Module(body=wanted, type_ignores=[]), "train_gpt.py:polar_express", "exec"), ns)
-    return ns["polar_express"]
+    fn = ns["polar_express"]
+    if mode is not None:
+        fn = torch.compile(fn, dynamic=False, fullgraph=True, mode=mode)
+    return fn
 
 
 def make_inputs(shape, device):
@@ -57,10 +67,12 @@ def main():
     ap.add_argument("--trace", type=str, default=None, help="write a torch.profiler chrome trace of the timed loop")
     ap.add_argument("--ncu", action="store_true", help="cudaProfilerStart/Stop around one call per shape (for ncu --profile-from-start off)")
     ap.add_argument("--shapes", type=str, default=",".join(SHAPES), help="comma-separated subset of " + ",".join(SHAPES))
+    ap.add_argument("--mode", type=str, default=None,
+                    help="torch.compile mode to use instead of train_gpt.py's own decorator, e.g. reduce-overhead")
     args = ap.parse_args()
 
     device = torch.device("cuda")
-    polar_express = load_polar_express()
+    polar_express = load_polar_express(args.mode)
     shapes = {k: SHAPES[k] for k in args.shapes.split(",")}
 
     inputs = {k: make_inputs(s, device) for k, s in shapes.items()}
@@ -69,6 +81,9 @@ def main():
         grad, mom, momentum_t = inputs[label]
         split = shapes[label][-2] > 1024  # matches `is_large_matrix` in _normuon_update
         return polar_express(grad.clone(), mom, momentum_t, split_baddbmm=split)
+
+    if args.mode:
+        print(f"torch.compile(mode={args.mode!r})")
 
     # compile + warmup (each shape / split_baddbmm combination is its own graph)
     t0 = time.perf_counter()
