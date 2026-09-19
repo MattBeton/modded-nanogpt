@@ -1,13 +1,19 @@
 """
-Single-GPU microbenchmark of the Polar Express step on the exact per-rank chunk shapes used in
-train_gpt.py (world_size=8), for timing and for hardware-counter profiling with ncu.
+Single-GPU microbenchmark of the Polar Express / ANVIL cascade on the exact per-rank chunk shapes
+used in training (world_size=8), for timing and for hardware-counter profiling with ncu.
 
-The `polar_express` function and its coefficients are extracted from train_gpt.py with `ast`, so this
-always benchmarks the code that actually runs in training (no copy to drift).
+The cascade function and its coefficients are extracted from a train_gpt.py with `ast`, so this
+always benchmarks the code that actually runs in training (no copy to drift). Two variants are
+recognised automatically:
 
-  python profile/bench_polar_express.py                 # CUDA-event timing per shape
-  python profile/bench_polar_express.py --trace out.json  # torch.profiler trace of the PE loop (launch gaps, no torchrun needed)
-  profile/ncu_polar_express.sh                          # L2 hit rate / DRAM / tensor-pipe utilisation per kernel
+  polar_express(grad, momentum_buffer, momentum_t, split_baddbmm)                  -- current master
+  anvil_cascade(grad, velocity, momentum_t, split_baddbmm, bimax_bf_t, bimax_w_t)  -- PR #360
+
+  python profile/bench_polar_express.py                   # CUDA-event timing per shape
+  python profile/bench_polar_express.py --src other/train_gpt.py   # benchmark another tree
+  python profile/bench_polar_express.py --trace out.json  # torch.profiler trace of the loop
+  python profile/bench_polar_express.py --cudagraph       # hand-captured CUDA graph replay
+  profile/ncu_polar_express.sh                            # L2 / DRAM / tensor-pipe per kernel
 """
 import argparse
 import ast
@@ -21,73 +27,117 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 from triton_kernels import XXT, XTX, ba_plus_cAA  # noqa: E402
 
-# Per-rank NorMuon chunk shapes at world_size=8 (see GPT.init_attn / init_mlp and NorMuonAndAdam._init_state)
-SHAPES = {
-    "qk_bank":  (8, 256, 768),    # (64, 256, 768) / 8   -> wide path, baddbmm
-    "vo_bank":  (3, 768, 768),    # (24, 768, 768) / 8   -> wide path (square), baddbmm
-    "mlp_bank": (3, 3072, 768),   # (24, 3072, 768) / 8  -> tall path, split bmm + add_
+# Per-rank chunk shapes at world_size=8, i.e. <full bank> / 8.
+#   master: qk (64,256,768), vo (24,768,768), mlp reshape (24,3072,768)
+#   PR#360: qk (48,256,768), vo (16,768,768), mlp reshape (24,2816,768)
+SHAPES_BY_VARIANT = {
+    "polar_express": {
+        "qk_bank":  (8, 256, 768),
+        "vo_bank":  (3, 768, 768),
+        "mlp_bank": (3, 3072, 768),
+    },
+    "anvil_cascade": {
+        "qk_bank":  (6, 256, 768),
+        "vo_bank":  (2, 768, 768),
+        "mlp_bank": (3, 2816, 768),
+    },
 }
 
+CASCADES = ("polar_express", "anvil_cascade")
 
-def load_polar_express(mode=None):
-    """Compile the polar_express from train_gpt.py. mode=None keeps train_gpt.py's own
-    @torch.compile(dynamic=False, fullgraph=True); a mode string (e.g. "reduce-overhead",
-    which wraps the graph in CUDA graphs) strips that decorator and recompiles instead."""
-    tree = ast.parse((REPO / "train_gpt.py").read_text())
-    wanted = []
-    for node in tree.body:
-        if isinstance(node, ast.Assign) and any(getattr(t, "id", None) == "polar_express_coeffs" for t in node.targets):
-            wanted.append(node)
-        if isinstance(node, ast.FunctionDef) and node.name == "polar_express":
-            wanted.append(node)
-    assert len(wanted) == 2, "could not find polar_express / polar_express_coeffs in train_gpt.py"
+
+def load_cascade(src: Path, mode=None):
+    """Extract the cascade function from `src` plus the module-level constants it reads.
+
+    mode=None keeps the source's own @torch.compile decorator; a mode string (e.g.
+    "reduce-overhead", which wraps the graph in CUDA graphs) strips it and recompiles instead.
+    Returns (fn, variant_name).
+    """
+    tree = ast.parse(src.read_text())
+    fn_node = next((n for n in tree.body
+                    if isinstance(n, ast.FunctionDef) and n.name in CASCADES), None)
+    assert fn_node is not None, f"no {' or '.join(CASCADES)} found in {src}"
+
+    # Module-level constants the body references (coefficient tables, rail betas, ...).
+    used = {n.id for n in ast.walk(fn_node) if isinstance(n, ast.Name)}
+    consts = [n for n in tree.body
+              if isinstance(n, ast.Assign)
+              and any(getattr(t, "id", None) in used for t in n.targets)]
+
     if mode is not None:
-        for node in wanted:
-            if isinstance(node, ast.FunctionDef):
-                node.decorator_list = []
+        fn_node = ast.parse(ast.unparse(fn_node)).body[0]  # detach from the original tree
+        fn_node.decorator_list = []
+
     ns = dict(torch=torch, XXT=XXT, XTX=XTX, ba_plus_cAA=ba_plus_cAA)
-    exec(compile(ast.Module(body=wanted, type_ignores=[]), "train_gpt.py:polar_express", "exec"), ns)
-    fn = ns["polar_express"]
+    module = ast.Module(body=[*consts, fn_node], type_ignores=[])
+    exec(compile(ast.fix_missing_locations(module), f"{src}:{fn_node.name}", "exec"), ns)
+
+    fn = ns[fn_node.name]
     if mode is not None:
         fn = torch.compile(fn, dynamic=False, fullgraph=True, mode=mode)
-    return fn
+    return fn, fn_node.name
 
 
-def make_inputs(shape, device):
+def make_inputs(shape, device, variant, on_gpu_scalars=False):
+    """State tensors for one bank. Scalars are 0-D tensors so the per-step refill never
+    recompiles; they must be on the GPU for capture (a CPU scalar is a blocking H2D in-graph)."""
+    def scalar(v):
+        return torch.tensor(v, device=device) if on_gpu_scalars else torch.tensor(v)
+
     grad = torch.randn(shape, dtype=torch.float32, device=device)
-    mom = torch.randn(shape, dtype=torch.float32, device=device)
-    momentum_t = torch.tensor(0.95)  # 0-D CPU tensor, as in training
-    return grad, mom, momentum_t
+    if variant == "anvil_cascade":
+        state = torch.randn((2, *shape), dtype=torch.float32, device=device)  # twin-rail velocity
+        scalars = dict(momentum_t=scalar(0.95), bimax_bf_t=scalar(0.85), bimax_w_t=scalar(0.4385))
+    else:
+        state = torch.randn(shape, dtype=torch.float32, device=device)  # momentum buffer
+        scalars = dict(momentum_t=scalar(0.95))
+    return grad, state, scalars
+
+
+def call_cascade(fn, variant, grad, state, scalars, split):
+    if variant == "anvil_cascade":
+        return fn(grad, state, scalars["momentum_t"], split_baddbmm=split,
+                  bimax_bf_t=scalars["bimax_bf_t"], bimax_w_t=scalars["bimax_w_t"])
+    return fn(grad, state, scalars["momentum_t"], split_baddbmm=split)
+
+
+def _tflops(shape, ms, maps=5):
+    """Rough FLOP count for context: `maps` iterations x (gram + gram^2 + big matmul)."""
+    b, m, n = shape[0], shape[-2], shape[-1]
+    k = min(m, n)
+    return maps * b * (2 * m * n * k + 2 * k ** 3 + 2 * m * n * k) / ms / 1e9
 
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--src", type=str, default=str(REPO / "train_gpt.py"),
+                    help="train_gpt.py to extract the cascade from")
     ap.add_argument("--iters", type=int, default=50)
     ap.add_argument("--warmup", type=int, default=5)
     ap.add_argument("--trace", type=str, default=None, help="write a torch.profiler chrome trace of the timed loop")
-    ap.add_argument("--ncu", action="store_true", help="cudaProfilerStart/Stop around one call per shape (for ncu --profile-from-start off)")
-    ap.add_argument("--shapes", type=str, default=",".join(SHAPES), help="comma-separated subset of " + ",".join(SHAPES))
-    ap.add_argument("--cudagraph", action="store_true",
-                    help="capture one polar_express call per shape in a CUDA graph and time the replay")
-    ap.add_argument("--mode", type=str, default=None,
-                    help="torch.compile mode to use instead of train_gpt.py's own decorator, e.g. reduce-overhead")
+    ap.add_argument("--ncu", action="store_true", help="cudaProfilerStart/Stop around one call per shape")
+    ap.add_argument("--cudagraph", action="store_true", help="capture one call per shape in a CUDA graph and time the replay")
+    ap.add_argument("--mode", type=str, default=None, help="torch.compile mode instead of the source's decorator, e.g. reduce-overhead")
+    ap.add_argument("--shapes", type=str, default=None, help="comma-separated subset of the bank names")
     args = ap.parse_args()
 
     device = torch.device("cuda")
-    polar_express = load_polar_express(args.mode)
-    shapes = {k: SHAPES[k] for k in args.shapes.split(",")}
+    cascade, variant = load_cascade(Path(args.src), args.mode)
+    all_shapes = SHAPES_BY_VARIANT[variant]
+    keys = args.shapes.split(",") if args.shapes else list(all_shapes)
+    shapes = {k: all_shapes[k] for k in keys}
+    n_maps = 6 if variant == "anvil_cascade" else 5
+    print(f"variant={variant} ({n_maps} maps)  src={args.src}"
+          + (f"  torch.compile(mode={args.mode!r})" if args.mode else ""))
 
-    inputs = {k: make_inputs(s, device) for k, s in shapes.items()}
+    inputs = {k: make_inputs(s, device, variant, on_gpu_scalars=args.cudagraph)
+              for k, s in shapes.items()}
 
     def run(label):
-        grad, mom, momentum_t = inputs[label]
-        split = shapes[label][-2] > 1024  # matches `is_large_matrix` in _normuon_update
-        return polar_express(grad.clone(), mom, momentum_t, split_baddbmm=split)
+        grad, state, scalars = inputs[label]
+        split = shapes[label][-2] > 1024  # matches `is_large_matrix` at the call site
+        return call_cascade(cascade, variant, grad.clone(), state, scalars, split)
 
-    if args.mode:
-        print(f"torch.compile(mode={args.mode!r})")
-
-    # compile + warmup (each shape / split_baddbmm combination is its own graph)
     t0 = time.perf_counter()
     for _ in range(args.warmup):
         for label in shapes:
@@ -102,11 +152,11 @@ def main():
             run(label)
             torch.cuda.synchronize()
             torch.cuda.cudart().cudaProfilerStop()
-            print(f"profiled one polar_express call for {label} {shapes[label]}")
+            print(f"profiled one {variant} call for {label} {shapes[label]}")
         return
 
     if args.cudagraph:
-        _bench_cudagraph(polar_express, shapes, inputs, device, args.iters)
+        _bench_cudagraph(cascade, variant, shapes, inputs, args.iters)
         return
 
     prof = None
@@ -126,12 +176,7 @@ def main():
         torch.cuda.synchronize()
         ms = start.elapsed_time(end) / args.iters
         total += ms
-        m, n = shapes[label][-2:]
-        b = shapes[label][0]
-        # 5 iters x (small gram matmul + gram^2 + big matmul): rough FLOP count for context
-        k = min(m, n)
-        flops = 5 * b * (2 * m * n * k + 2 * k * k * k + 2 * m * n * k)
-        print(f"{label:<9} {str(shapes[label]):<16} {ms:7.3f} ms/call   ~{flops / ms / 1e9:6.1f} TFLOP/s effective")
+        print(f"{label:<9} {str(shapes[label]):<16} {ms:7.3f} ms/call   ~{_tflops(shapes[label], ms, n_maps):6.1f} TFLOP/s effective")
     print(f"{'total':<9} {'':<16} {total:7.3f} ms/step (one call per shape per step)")
 
     if prof is not None:
@@ -141,34 +186,31 @@ def main():
         _summarize_gaps(args.trace, shapes, args.iters)
 
 
-def _bench_cudagraph(polar_express, shapes, inputs, device, iters):
-    """Replay-time of one polar_express call captured in a CUDA graph.
+def _bench_cudagraph(cascade, variant, shapes, inputs, iters):
+    """Replay-time of one cascade call captured in a CUDA graph.
 
-    torch.compile(mode="reduce-overhead") refuses to apply cudagraphs here because polar_express
-    mutates its inputs (the in-place Nesterov lerp_ on grad_chunk / momentum_buffer). Capturing by
-    hand is fine for the training use: the momentum buffer is persistent optimizer state, and the
-    grad chunk can live in a fixed buffer that the all-gather writes into. momentum_t must move to
-    the GPU so the schedule can be updated between replays without re-capturing.
+    torch.compile(mode="reduce-overhead") refuses to apply cudagraphs here because the cascade
+    mutates its inputs (the in-place Nesterov lerp_ on grad_chunk / momentum / velocity rails).
+    Capturing by hand is fine for the training use: the momentum/velocity buffers are persistent
+    optimizer state, and the grad chunk can live in the all-gather's destination buffer.
     """
     print(f"{'label':<9} {'':<16} {'graph':>10} {'graph+copy':>12}")
     total_g = total_gc = 0.0
     for label, shape in shapes.items():
-        grad, mom, _ = inputs[label]
+        grad, state, scalars = inputs[label]
         split = shape[-2] > 1024
-        static_grad, static_mom = grad.clone(), mom.clone()
-        momentum_t = torch.tensor(0.95, device=device)  # on-GPU so replays see schedule updates
-        src = grad.clone()
+        static_grad, src = grad.clone(), grad.clone()
 
         s = torch.cuda.Stream()
         s.wait_stream(torch.cuda.current_stream())
         with torch.cuda.stream(s):
             for _ in range(3):
-                polar_express(static_grad, static_mom, momentum_t, split_baddbmm=split)
+                call_cascade(cascade, variant, static_grad, state, scalars, split)
         torch.cuda.current_stream().wait_stream(s)
 
         g = torch.cuda.CUDAGraph()
         with torch.cuda.graph(g):
-            polar_express(static_grad, static_mom, momentum_t, split_baddbmm=split)
+            call_cascade(cascade, variant, static_grad, state, scalars, split)
 
         def timeit(fn):
             for _ in range(5):
