@@ -8,11 +8,12 @@
 # run-to-run noise. Read the traces, not the stopwatch.
 #
 #   profile/run_8gpu_session.sh all                 # everything, in order
-#   profile/run_8gpu_session.sh setup trace-base    # individual phases (resumable)
+#   profile/run_8gpu_session.sh setup arm-base      # individual phases (resumable)
 #   DRY_RUN=1 profile/run_8gpu_session.sh all       # 1 GPU, validates plumbing, no 8-GPU work
 #
+# Phases, in order: setup verify bench arm-base arm-tuned ncu
 # Env: TREE (checkout to run, default .), OUT (results dir), NGPU, WINDOW (PROFILE_STEPS),
-#      TIMED_RUNS, SHARDS.
+#      TIMED_RUNS (per arm, default 3), SHARDS.
 set -uo pipefail
 
 TREE="${TREE:-$(cd "$(dirname "$0")/.." && pwd)}"
@@ -23,6 +24,12 @@ TIMED_RUNS="${TIMED_RUNS:-3}"
 SHARDS="${SHARDS:-6}"
 DRY_RUN="${DRY_RUN:-0}"
 PROF="$TREE/profile"
+
+# Inductor/Triton caches persist across processes, so only the FIRST run of each arm compiles.
+# Pin them somewhere stable rather than a per-boot tmpdir.
+export TORCHINDUCTOR_CACHE_DIR="${TORCHINDUCTOR_CACHE_DIR:-/workspace/.cache/inductor}"
+export TRITON_CACHE_DIR="${TRITON_CACHE_DIR:-/workspace/.cache/triton}"
+mkdir -p "$TORCHINDUCTOR_CACHE_DIR" "$TRITON_CACHE_DIR"
 
 if [ "$DRY_RUN" = "1" ]; then NGPU=1; OUT="${OUT}_dry"; WINDOW="${WINDOW_DRY:-3:6}"; TIMED_RUNS=0; fi
 mkdir -p "$OUT"
@@ -84,16 +91,32 @@ run_trace() {  # $1 = arm name
   log "    analysis -> $OUT/analysis_$arm.txt"
 }
 
-if have_phase trace-base; then
-  log "=== trace: baseline ==="
+timed_runs() {  # $1 = arm name; assumes tiles for that arm are already applied AND compiled
+  [ "${TIMED_RUNS:-0}" -eq 0 ] && return 0
+  for i in $(seq 1 "$TIMED_RUNS"); do
+    ( cd "$TREE" && torchrun --standalone --nproc_per_node="$NGPU" train_gpt.py ) >"$OUT/timed_$1_$i.log" 2>&1
+    local t v
+    t=$(grep -oE "train_time:[0-9]+ms" "$OUT/timed_$1_$i.log" | tail -1 | grep -oE "[0-9]+")
+    v=$(grep -oE "val_loss:[0-9.]+" "$OUT/timed_$1_$i.log" | tail -1)
+    log "    $1 timed run $i: train_time=${t:-FAILED}ms ${v:-}"
+    echo "$1 $i ${t:-NA} ${v:-NA}" >>"$OUT/timed_summary.txt"
+  done
+}
+
+# Each arm is done contiguously: trace first (pays the compile), then the timed runs reuse the
+# warm cache. Flipping tiles between phases would force a recompile every time.
+if have_phase arm-base; then
+  log "=== ARM: baseline (cold compile expected ~7-10 min, then warm) ==="
   python "$PROF/gram_tiles.py" --file "$TREE/triton_kernels.py" --revert >/dev/null 2>&1
   run_trace baseline
+  timed_runs baseline
 fi
 
-if have_phase trace-tuned; then
-  log "=== trace: tuned tiles ==="
+if have_phase arm-tuned; then
+  log "=== ARM: tuned tiles (only the 2 Triton kernels + cascade graph recompile) ==="
   python "$PROF/gram_tiles.py" --file "$TREE/triton_kernels.py" | tee -a "$OUT/session.log"
   run_trace tuned
+  timed_runs tuned
   python "$PROF/gram_tiles.py" --file "$TREE/triton_kernels.py" --revert >/dev/null
 fi
 
@@ -106,23 +129,6 @@ if have_phase ncu; then
   else
     log "    ncu OK -> $OUT/ncu_cascade.csv"; tail -20 "$OUT/ncu.log" | tee -a "$OUT/session.log"
   fi
-fi
-
-# ---------------------------------------------------------------- timed runs (secondary evidence)
-if have_phase timed && [ "$TIMED_RUNS" -gt 0 ]; then
-  log "=== timed runs: $TIMED_RUNS per arm (NOT the primary evidence; effect is below noise) ==="
-  for arm in baseline tuned; do
-    [ "$arm" = tuned ] && python "$PROF/gram_tiles.py" --file "$TREE/triton_kernels.py" >/dev/null \
-                       || python "$PROF/gram_tiles.py" --file "$TREE/triton_kernels.py" --revert >/dev/null 2>&1
-    for i in $(seq 1 "$TIMED_RUNS"); do
-      ( cd "$TREE" && torchrun --standalone --nproc_per_node="$NGPU" train_gpt.py ) >"$OUT/timed_${arm}_$i.log" 2>&1
-      t=$(grep -oE "train_time:[0-9]+ms" "$OUT/timed_${arm}_$i.log" | tail -1 | grep -oE "[0-9]+")
-      v=$(grep -oE "val_loss:[0-9.]+" "$OUT/timed_${arm}_$i.log" | tail -1)
-      log "    $arm run $i: train_time=${t:-FAILED}ms $v"
-      echo "$arm $i ${t:-NA} ${v:-NA}" >>"$OUT/timed_summary.txt"
-    done
-  done
-  python "$PROF/gram_tiles.py" --file "$TREE/triton_kernels.py" --revert >/dev/null 2>&1
 fi
 
 # ---------------------------------------------------------------- report
