@@ -1,0 +1,2723 @@
+{
+  "qk": {
+    "baseline": {
+      "us": 155.977600812912,
+      "samples_us": [
+        156.27520084381104,
+        156.14720582962036,
+        155.57760000228882,
+        155.9615969657898,
+        156.14720582962036,
+        156.3647985458374,
+        155.9872031211853,
+        156.42240047454834,
+        156.05759620666504,
+        155.94240427017212,
+        156.0703992843628,
+        155.9999942779541,
+        156.03840351104736,
+        155.96799850463867,
+        155.5840015411377,
+        155.840003490448,
+        156.19839429855347,
+        155.63520193099976,
+        155.87199926376343,
+        155.4368019104004,
+        155.69920539855957,
+        156.01279735565186,
+        155.31519651412964,
+        155.78880310058594
+      ],
+      "config": [
+        [
+          128,
+          64,
+          8,
+          4
+        ],
+        [
+          128,
+          64,
+          8,
+          4
+        ]
+      ],
+      "compile_s": 1.6436791066080332,
+      "checks": null
+    },
+    "tuned": {
+      "us": 120.54719924926758,
+      "samples_us": [
+        120.12799978256226,
+        119.35360431671143,
+        120.64640522003174,
+        120.55679559707642,
+        121.25439643859863,
+        120.52479982376099,
+        120.14080286026001,
+        120.35200595855713,
+        120.8191990852356,
+        120.88320255279541,
+        120.68480253219604,
+        119.9679970741272,
+        119.53279972076416,
+        120.16639709472656,
+        120.70399522781372,
+        120.33920288085938,
+        120.78720331192017,
+        120.63360214233398,
+        120.53760290145874,
+        120.9280014038086,
+        120.33920288085938,
+        121.15839719772339,
+        120.94719409942627,
+        120.05120515823364
+      ],
+      "config": [
+        [
+          64,
+          128,
+          4,
+          3
+        ],
+        [
+          64,
+          64,
+          4,
+          4
+        ]
+      ],
+      "compile_s": 3.109729001298547,
+      "checks": [
+        {
+          "seed": 123,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        }
+      ]
+    },
+    "exact": {
+      "us": 122.6144015789032,
+      "samples_us": [
+        122.88639545440674,
+        122.3296046257019,
+        122.60479927062988,
+        122.58559465408325,
+        122.84799814224243,
+        122.49599695205688,
+        122.50880002975464,
+        122.69439697265625,
+        122.90560007095337,
+        122.37440347671509,
+        122.64319658279419,
+        123.1552004814148,
+        122.39999771118164,
+        123.1552004814148,
+        122.64959812164307,
+        122.62400388717651,
+        122.80960083007812,
+        122.88639545440674,
+        122.36800193786621,
+        122.39999771118164,
+        122.49599695205688,
+        122.34879732131958,
+        122.66240119934082,
+        122.2208023071289
+      ],
+      "config": [
+        [
+          64,
+          128,
+          4,
+          3
+        ],
+        [
+          64,
+          64,
+          4,
+          4
+        ]
+      ],
+      "compile_s": 1.105130834504962,
+      "checks": [
+        {
+          "seed": 123,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        }
+      ]
+    }
+  },
+  "vo": {
+    "baseline": {
+      "us": 186.19839549064636,
+      "samples_us": [
+        185.81119775772095,
+        186.51520013809204,
+        185.57440042495728,
+        185.971200466156,
+        185.7408046722412,
+        186.19519472122192,
+        186.7583990097046,
+        185.91359853744507,
+        186.36800050735474,
+        186.3744020462036,
+        186.39999628067017,
+        187.10399866104126,
+        186.59839630126953,
+        186.43840551376343,
+        186.2015962600708,
+        186.70719861984253,
+        187.02720403671265,
+        186.13120317459106,
+        185.81759929656982,
+        186.17600202560425,
+        186.95679903030396,
+        184.18560028076172,
+        184.51199531555176,
+        184.97920036315918
+      ],
+      "config": [
+        [
+          128,
+          64,
+          8,
+          4
+        ],
+        [
+          128,
+          64,
+          8,
+          4
+        ]
+      ],
+      "compile_s": 1.1406812574714422,
+      "checks": null
+    },
+    "tuned": {
+      "us": 170.6335961818695,
+      "samples_us": [
+        170.96320390701294,
+        171.0976004600525,
+        170.53439617156982,
+        170.74559926986694,
+        171.05920314788818,
+        171.0911989212036,
+        170.63679695129395,
+        170.6112027168274,
+        170.95680236816406,
+        170.5024003982544,
+        170.62400579452515,
+        170.2847957611084,
+        170.93759775161743,
+        170.81600427627563,
+        170.70080041885376,
+        170.53439617156982,
+        171.25120162963867,
+        170.58559656143188,
+        170.61760425567627,
+        171.06560468673706,
+        170.63039541244507,
+        169.77280378341675,
+        169.66400146484375,
+        169.58719491958618
+      ],
+      "config": [
+        [
+          64,
+          128,
+          4,
+          3
+        ],
+        [
+          64,
+          128,
+          4,
+          3
+        ]
+      ],
+      "compile_s": 2.8719464391469955,
+      "checks": [
+        {
+          "seed": 123,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        }
+      ]
+    },
+    "exact": {
+      "us": 170.45120000839233,
+      "samples_us": [
+        170.5407977104187,
+        170.39999961853027,
+        170.17600536346436,
+        170.56000232696533,
+        170.63679695129395,
+        170.38719654083252,
+        170.25920152664185,
+        170.29119729995728,
+        169.88799571990967,
+        170.43839693069458,
+        170.63039541244507,
+        170.8224058151245,
+        170.2720046043396,
+        170.22720575332642,
+        170.38719654083252,
+        170.99519968032837,
+        170.8224058151245,
+        170.80320119857788,
+        170.63039541244507,
+        170.4640030860901,
+        170.87359428405762,
+        170.85440158843994,
+        169.92640495300293,
+        169.1264033317566
+      ],
+      "config": [
+        [
+          64,
+          128,
+          4,
+          3
+        ],
+        [
+          64,
+          128,
+          4,
+          3
+        ]
+      ],
+      "compile_s": 1.0854408964514732,
+      "checks": [
+        {
+          "seed": 123,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        }
+      ]
+    }
+  },
+  "mlp": {
+    "baseline": {
+      "us": 480.7935953140259,
+      "samples_us": [
+        485.4207992553711,
+        485.5487823486328,
+        485.53600311279297,
+        485.7408046722412,
+        486.3423824310303,
+        485.24160385131836,
+        485.48479080200195,
+        484.5695972442627,
+        480.8000087738037,
+        481.42080307006836,
+        479.8912048339844,
+        480.844783782959,
+        481.29920959472656,
+        479.69279289245605,
+        480.6528091430664,
+        480.78718185424805,
+        480.185604095459,
+        478.8032054901123,
+        479.6288013458252,
+        479.32162284851074,
+        480.0960063934326,
+        479.5839786529541,
+        479.98080253601074,
+        479.5775890350342
+      ],
+      "config": [
+        [
+          128,
+          64,
+          8,
+          4
+        ],
+        [
+          128,
+          64,
+          8,
+          4
+        ]
+      ],
+      "compile_s": 1.3954584077000618,
+      "checks": null
+    },
+    "tuned": {
+      "us": 477.53281593322754,
+      "samples_us": [
+        482.8671932220459,
+        481.97760581970215,
+        481.9200038909912,
+        482.22718238830566,
+        481.6512107849121,
+        482.1375846862793,
+        482.4512004852295,
+        482.6240062713623,
+        478.0032157897949,
+        477.1200180053711,
+        477.3695945739746,
+        477.59361267089844,
+        477.1008014678955,
+        477.83679962158203,
+        477.47201919555664,
+        477.16479301452637,
+        477.89440155029297,
+        476.8064022064209,
+        476.4416217803955,
+        476.77440643310547,
+        476.23682022094727,
+        476.2176036834717,
+        476.06401443481445,
+        475.9488105773926
+      ],
+      "config": [
+        [
+          128,
+          64,
+          4,
+          4
+        ],
+        [
+          64,
+          128,
+          4,
+          3
+        ]
+      ],
+      "compile_s": 2.9098276682198048,
+      "checks": [
+        {
+          "seed": 123,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        }
+      ]
+    },
+    "exact": {
+      "us": 478.79998683929443,
+      "samples_us": [
+        484.39040184020996,
+        483.6671829223633,
+        483.10399055480957,
+        483.3087921142578,
+        483.28962326049805,
+        483.58402252197266,
+        483.00161361694336,
+        483.68639945983887,
+        478.57279777526855,
+        478.7007808685303,
+        478.8991928100586,
+        478.6367893218994,
+        478.3616065979004,
+        479.3920040130615,
+        479.18081283569336,
+        478.3936023712158,
+        479.0656089782715,
+        477.2287845611572,
+        477.2928237915039,
+        477.9327869415283,
+        477.7984142303467,
+        477.71520614624023,
+        478.08637619018555,
+        477.25439071655273
+      ],
+      "config": [
+        [
+          128,
+          64,
+          4,
+          4
+        ],
+        [
+          64,
+          128,
+          4,
+          3
+        ]
+      ],
+      "compile_s": 1.2761350516229868,
+      "checks": [
+        {
+          "seed": 123,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 123,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 321,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 0,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 1,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 2,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 3,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 4,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 5,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 6,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        },
+        {
+          "seed": 456,
+          "step": 7,
+          "output": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          },
+          "state": {
+            "bitwise": true,
+            "relative_l2": 0.0,
+            "max_abs": 0.0,
+            "finite": true
+          }
+        }
+      ]
+    }
+  }
+}

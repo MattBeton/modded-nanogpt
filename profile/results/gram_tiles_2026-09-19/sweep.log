@@ -1,0 +1,49 @@
+{"torch": "2.10.0+cu128", "triton": "3.6.0", "cuda": "12.8", "gpu": "NVIDIA H100 80GB HBM3", "shapes": {"qk": [6, 256, 768], "vo": [2, 768, 768], "mlp": [3, 2816, 768]}, "hashes": {"train_gpt.py": "c6da246b1d87a525c0130f212d40e9a32e7eba01738e97686011d0854dd6945a", "triton_kernels.py": "71728386ec63079ba65348e85165070c91a8ae5501b505d9cb469a62ff65168b"}, "nvidia_smi": "Sat Sep 19 12:47:36 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 580.126.09             Driver Version: 580.126.09     CUDA Version: 13.0     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA H100 80GB HBM3          On  |   00000000:3B:00.0 Off |                    0 |\n| N/A   32C    P0             72W /  700W |       4MiB /  81559MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|  No running processes found                                                             |\n+-----------------------------------------------------------------------------------------+\n"}
+SWEEP qk/gram: 72 configurations
+  1/72 (64, 128, 8, 3) 4.7775998711586
+  13/72 (64, 32, 8, 3) 6.1007000505924225
+  25/72 (64, 64, 8, 2) 6.519000232219696
+  37/72 (128, 32, 8, 4) 7.9277001321315765
+  49/72 (32, 64, 8, 2) 9.140700101852417
+  61/72 (128, 32, 4, 3) 8.256500214338303
+RESULT qk gram {"config": [64, 128, 4, 3], "us": 4.157550074160099, "baseline_us": 7.336650043725967, "speedup": 1.7646570487086928, "bitwise": true}
+SWEEP qk/poly: 72 configurations
+  1/72 (256, 64, 8, 4) out of resource: shared memory, Required: 262144, Hardware limit: 232448. Reducing block sizes or `num_stages` may help.
+  13/72 (256, 128, 8, 4) out of resource: shared memory, Required: 524288, Hardware limit: 232448. Reducing block sizes or `num_stages` may help.
+  25/72 (128, 64, 8, 4) 6.098800152540207
+  37/72 (64, 64, 4, 4) 3.540699928998947
+  49/72 (256, 64, 4, 3) 84.11660194396973
+  61/72 (64, 32, 4, 4) 3.806599974632263
+RESULT qk poly {"config": [64, 64, 4, 4], "us": 3.495349921286106, "baseline_us": 5.973350070416927, "speedup": 1.7089419385567688, "bitwise": true}
+SWEEP vo/gram: 72 configurations
+  1/72 (256, 64, 8, 2) 90.98520278930664
+  13/72 (256, 128, 4, 4) out of resource: shared memory, Required: 524288, Hardware limit: 232448. Reducing block sizes or `num_stages` may help.
+  25/72 (128, 32, 4, 3) 8.177500218153
+  37/72 (128, 32, 4, 2) 12.415499985218048
+  49/72 (256, 64, 8, 4) out of resource: shared memory, Required: 262144, Hardware limit: 232448. Reducing block sizes or `num_stages` may help.
+  61/72 (32, 64, 8, 3) 12.392500042915344
+RESULT vo gram {"config": [64, 128, 4, 3], "us": 6.557000055909157, "baseline_us": 7.420999929308891, "speedup": 1.1317675562044718, "bitwise": true}
+SWEEP vo/poly: 72 configurations
+  1/72 (128, 32, 4, 3) 8.92229974269867
+  13/72 (32, 64, 4, 3) 12.074699997901917
+  25/72 (256, 64, 4, 3) 168.30899715423584
+  37/72 (64, 128, 8, 3) 7.372699677944183
+  49/72 (256, 128, 4, 4) out of resource: shared memory, Required: 524288, Hardware limit: 232448. Reducing block sizes or `num_stages` may help.
+  61/72 (32, 32, 4, 2) 14.195899665355682
+RESULT vo poly {"config": [64, 128, 4, 3], "us": 6.838200241327286, "baseline_us": 8.424200117588043, "speedup": 1.231932353585615, "bitwise": true}
+SWEEP mlp/gram: 72 configurations
+  1/72 (64, 128, 8, 3) 18.90130043029785
+  13/72 (256, 32, 8, 2) 510.3930950164795
+  25/72 (64, 64, 4, 4) 21.64189964532852
+  37/72 (32, 128, 4, 2) 57.408201694488525
+  49/72 (256, 128, 4, 4) out of resource: shared memory, Required: 524288, Hardware limit: 232448. Reducing block sizes or `num_stages` may help.
+  61/72 (128, 128, 8, 3) 18.69550049304962
+RESULT mlp gram {"config": [128, 64, 4, 4], "us": 16.51645004749298, "baseline_us": 16.535350680351257, "speedup": 1.0011443520129282, "bitwise": true}
+SWEEP mlp/poly: 72 configurations
+  1/72 (256, 32, 8, 4) 144.753897190094
+  13/72 (128, 128, 8, 2) 11.262399703264236
+  25/72 (32, 128, 4, 4) 15.585799515247345
+  37/72 (32, 32, 4, 4) 17.688100039958954
+  49/72 (32, 32, 8, 4) 25.57069957256317
+  61/72 (64, 128, 4, 2) 9.55599993467331
+RESULT mlp poly {"config": [64, 128, 4, 3], "us": 7.916650176048279, "baseline_us": 8.705399930477142, "speedup": 1.0996317554633417, "bitwise": true}

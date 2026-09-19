@@ -1,0 +1,2186 @@
+[
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      32,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.581875193864107,
+    "candidate_us": 6.774312350898981,
+    "speedup": 1.1192095671316304,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      32,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 7.580062374472618,
+    "candidate_us": 6.504000164568424,
+    "speedup": 1.1654462150487348,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      64,
+      32,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.581437472254038,
+    "candidate_us": 5.001999903470278,
+    "speedup": 1.5156812512119808,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      64,
+      32,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 7.328187581151724,
+    "candidate_us": 4.911750089377165,
+    "speedup": 1.491970773716823,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      64,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.33256246894598,
+    "candidate_us": 5.041687283664942,
+    "speedup": 1.4543866083688828,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      64,
+      128,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 7.329937536269426,
+    "candidate_us": 5.106499884277582,
+    "speedup": 1.4354132384958223,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      128,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.295562420040369,
+    "candidate_us": 5.14918752014637,
+    "speedup": 1.416837586803012,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      128,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 7.295437622815371,
+    "candidate_us": 5.639437586069107,
+    "speedup": 1.2936463098442688,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      128,
+      256,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.2915623895823956,
+    "candidate_us": 55.214811116456985,
+    "speedup": 0.13205808807718836,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      128,
+      256,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      256,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.2931875474751,
+    "candidate_us": 45.27699947357178,
+    "speedup": 0.16107930367011486,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "gram",
+    "config": [
+      256,
+      128,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      32,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 5.882374942302704,
+    "candidate_us": 4.076437558978796,
+    "speedup": 1.443018532038136,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      32,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 5.883062724024057,
+    "candidate_us": 4.231499973684549,
+    "speedup": 1.3903019639868794,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      64,
+      32,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 5.883562378585339,
+    "candidate_us": 3.621187526732683,
+    "speedup": 1.6247604784759506,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      64,
+      32,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 5.88481267914176,
+    "candidate_us": 3.9211250841617584,
+    "speedup": 1.5007969786303796,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      64,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 5.881312303245068,
+    "candidate_us": 4.233937710523605,
+    "speedup": 1.3890880559312087,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      64,
+      128,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 5.883624777197838,
+    "candidate_us": 4.465749952942133,
+    "speedup": 1.3174998240377471,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      128,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 5.886937491595745,
+    "candidate_us": 4.177437629550695,
+    "speedup": 1.4092221149999349,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      128,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 5.881750024855137,
+    "candidate_us": 4.660999868065119,
+    "speedup": 1.261907357078896,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      128,
+      256,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 5.882562603801489,
+    "candidate_us": 29.89187464118004,
+    "speedup": 0.19679470339064903,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      128,
+      256,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      256,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 5.883624777197838,
+    "candidate_us": 23.845624178647995,
+    "speedup": 0.24673813246063786,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "qk",
+    "kind": "poly",
+    "config": [
+      256,
+      128,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      32,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.428687531501055,
+    "candidate_us": 12.064062058925629,
+    "speedup": 0.6157700031064512,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      32,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 7.402812596410513,
+    "candidate_us": 10.319812223315239,
+    "speedup": 0.7173398542742437,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      64,
+      32,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.488375063985586,
+    "candidate_us": 8.091375231742859,
+    "speedup": 0.9254761829124333,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      64,
+      32,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 7.423687726259232,
+    "candidate_us": 6.960125174373388,
+    "speedup": 1.0666026170897964,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      64,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.398687303066254,
+    "candidate_us": 7.642312441021204,
+    "speedup": 0.9681215417669582,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      64,
+      128,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 7.400000002235174,
+    "candidate_us": 5.720062647014856,
+    "speedup": 1.2936921252247178,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      128,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.486249785870314,
+    "candidate_us": 7.369312457740307,
+    "speedup": 1.0158681462891674,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      128,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 7.495999801903963,
+    "candidate_us": 6.11643772572279,
+    "speedup": 1.2255499259608906,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      128,
+      256,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.491812575608492,
+    "candidate_us": 56.32956326007843,
+    "speedup": 0.1329996566992389,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      128,
+      256,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      256,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 7.401187438517809,
+    "candidate_us": 46.01818695664406,
+    "speedup": 0.1608317912544191,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "gram",
+    "config": [
+      256,
+      128,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      32,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.262375369668007,
+    "candidate_us": 12.345249764621258,
+    "speedup": 0.6692756750330106,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      32,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 8.392499759793282,
+    "candidate_us": 10.73562540113926,
+    "speedup": 0.781742976883552,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      64,
+      32,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.388625457882881,
+    "candidate_us": 8.751374669373035,
+    "speedup": 0.9585494593484086,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      64,
+      32,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 8.22056271135807,
+    "candidate_us": 7.380062714219093,
+    "speedup": 1.1138879206974208,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      64,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.578937500715256,
+    "candidate_us": 8.191937580704689,
+    "speedup": 1.0472415611322659,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      64,
+      128,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 8.391312323510647,
+    "candidate_us": 6.3338750042021275,
+    "speedup": 1.3248307423091772,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      128,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.389687165617943,
+    "candidate_us": 8.018874563276768,
+    "speedup": 1.0462424744788188,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      128,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 8.26181285083294,
+    "candidate_us": 6.701374892145395,
+    "speedup": 1.232853404532929,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      128,
+      256,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.385875262320042,
+    "candidate_us": 62.95112520456314,
+    "speedup": 0.13321247610856327,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      128,
+      256,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      256,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.391187526285648,
+    "candidate_us": 48.27187582850456,
+    "speedup": 0.17383180956333685,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "vo",
+    "kind": "poly",
+    "config": [
+      256,
+      128,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      32,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 16.467437148094177,
+    "candidate_us": 49.134500324726105,
+    "speedup": 0.3351501905842567,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      32,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 16.47699996829033,
+    "candidate_us": 38.58175128698349,
+    "speedup": 0.4270671863941348,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      64,
+      32,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 16.56906306743622,
+    "candidate_us": 37.33743727207184,
+    "speedup": 0.44376540753721655,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      64,
+      32,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 16.596125438809395,
+    "candidate_us": 33.5800014436245,
+    "speedup": 0.49422646591220853,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      64,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 16.46924950182438,
+    "candidate_us": 20.590124651789665,
+    "speedup": 0.7998615734651657,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      64,
+      128,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 16.597062349319458,
+    "candidate_us": 14.741124585270882,
+    "speedup": 1.1259020472497059,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      128,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 16.576500609517097,
+    "candidate_us": 20.899999886751175,
+    "speedup": 0.7931340047530426,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      128,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 16.333311796188354,
+    "candidate_us": 16.153499484062195,
+    "speedup": 1.0111314772568984,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      128,
+      256,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 16.46956242620945,
+    "candidate_us": 188.59556317329407,
+    "speedup": 0.08732741189184884,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      128,
+      256,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      256,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 16.23743772506714,
+    "candidate_us": 134.05275344848633,
+    "speedup": 0.12112722273404736,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "gram",
+    "config": [
+      256,
+      128,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      32,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.650687523186207,
+    "candidate_us": 14.64343722909689,
+    "speedup": 0.5907552569691129,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      32,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 8.65231268107891,
+    "candidate_us": 11.428437195718288,
+    "speedup": 0.7570862518560749,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      64,
+      32,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.651499636471272,
+    "candidate_us": 10.792187415063381,
+    "speedup": 0.8016446808916413,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      64,
+      32,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 8.501437492668629,
+    "candidate_us": 11.575312353670597,
+    "speedup": 0.7344456229704052,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      64,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.649937808513641,
+    "candidate_us": 8.557062596082687,
+    "speedup": 1.010853632468865,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      64,
+      128,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 8.587437681853771,
+    "candidate_us": 7.258937694132328,
+    "speedup": 1.1830157584621948,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      128,
+      64,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.64962488412857,
+    "candidate_us": 9.226562455296516,
+    "speedup": 0.937469932711857,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      128,
+      64,
+      128,
+      4,
+      3
+    ],
+    "baseline_us": 8.500625379383564,
+    "candidate_us": 7.998187094926834,
+    "speedup": 1.0628190211723632,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      128,
+      256,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.761124685406685,
+    "candidate_us": 63.19337338209152,
+    "speedup": 0.13863992720302404,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      128,
+      256,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      256,
+      128,
+      64,
+      4,
+      3
+    ],
+    "baseline_us": 8.920500054955482,
+    "candidate_us": 48.37881401181221,
+    "speedup": 0.18438856423345654,
+    "checks": [
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      },
+      {
+        "bitwise": true,
+        "relative_l2": 0.0,
+        "max_abs": 0.0,
+        "finite": true
+      }
+    ]
+  },
+  {
+    "bank": "mlp",
+    "kind": "poly",
+    "config": [
+      256,
+      128,
+      128,
+      4,
+      3
+    ],
+    "error": "out of resource: shared memory, Required: 294912, Hardware limit: 232448. Reducing block sizes or `num_stages` may help."
+  }
+]

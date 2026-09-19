@@ -1,0 +1,407 @@
+{
+  "qk": {
+    "baseline_us": 157.04800188541412,
+    "rect_us": 123.70200082659721,
+    "speedup": 1.269567192413974,
+    "checks": [
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      }
+    ],
+    "configs": [
+      [
+        64,
+        32,
+        64,
+        4,
+        3
+      ],
+      [
+        64,
+        32,
+        64,
+        4,
+        3
+      ]
+    ]
+  },
+  "vo": {
+    "baseline_us": 188.04199993610382,
+    "rect_us": 162.85999864339828,
+    "speedup": 1.1546236123202025,
+    "checks": [
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      }
+    ],
+    "configs": [
+      [
+        64,
+        128,
+        128,
+        4,
+        3
+      ],
+      [
+        64,
+        128,
+        128,
+        4,
+        3
+      ]
+    ]
+  },
+  "mlp": {
+    "baseline_us": 481.1040014028549,
+    "rect_us": 463.1740003824234,
+    "speedup": 1.0387111560787683,
+    "checks": [
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      },
+      {
+        "output": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        },
+        "state": {
+          "bitwise": true,
+          "relative_l2": 0.0,
+          "max_abs": 0.0,
+          "finite": true
+        }
+      }
+    ],
+    "configs": [
+      [
+        64,
+        128,
+        128,
+        4,
+        3
+      ],
+      [
+        64,
+        128,
+        128,
+        4,
+        3
+      ]
+    ]
+  }
+}

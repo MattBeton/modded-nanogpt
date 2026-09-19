@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/gram-tile-sweep/single_gpu_followups.py", line 207, in <module>
+    main()
+  File "/workspace/gram-tile-sweep/single_gpu_followups.py", line 201, in main
+    streams(args, kernels)
+  File "/workspace/gram-tile-sweep/single_gpu_followups.py", line 156, in streams
+    print("STREAMS", json.dumps({k: round(v, 3) for k, v in result.items() if k.endswith("_us")}), flush=True)
+                                    ^^^^^^^^^^^
+TypeError: type list doesn't define __round__ method

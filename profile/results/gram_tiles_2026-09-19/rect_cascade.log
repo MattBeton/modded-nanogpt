@@ -1,0 +1,9 @@
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1904: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+RECT-CASCADE qk {'baseline_us': 157.048, 'rect_us': 123.702, 'speedup': 1.27}
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1904: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+RECT-CASCADE vo {'baseline_us': 188.042, 'rect_us': 162.86, 'speedup': 1.155}
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1904: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+RECT-CASCADE mlp {'baseline_us': 481.104, 'rect_us': 463.174, 'speedup': 1.039}
